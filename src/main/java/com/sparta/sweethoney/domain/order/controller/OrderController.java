@@ -22,17 +22,17 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDto> findOrder() {
+    public ResponseEntity<OrderDto> findOrder(@PathVariable Long orderId) {
         return null;
     }
 
     @PostMapping("/{orderId}")
-    public ResponseEntity<OrderDto> createOrder() {
+    public ResponseEntity<OrderDto> createOrder(@PathVariable Long orderId) {
         return null;
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity<OrderDto> updateStatus() {
+    public ResponseEntity<OrderDto> updateStatus(@PathVariable Long orderId) {
         return null;
     }
 }
