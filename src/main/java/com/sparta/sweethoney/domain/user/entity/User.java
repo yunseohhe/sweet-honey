@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.domain.user.entitiy;
+package com.sparta.sweethoney.domain.user.entity;
 
 
 import com.sparta.sweethoney.domain.user.dto.SignupRequestDto;
