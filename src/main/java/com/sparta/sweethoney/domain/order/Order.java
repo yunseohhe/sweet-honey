@@ -1,2 +1,4 @@
-package com.sparta.sweethoney.domain.order;public class order {
+package com.sparta.sweethoney.domain.order;
+
+public class Order {
 }

@@ -1,4 +1,10 @@
 package com.sparta.sweethoney.domain.store.entity;
 
-public class Store {
+import com.sparta.sweethoney.util.Timestamped;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+
+@Entity
+@Getter
+public class Store extends Timestamped {
 }
