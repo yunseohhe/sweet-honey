@@ -6,6 +6,7 @@ import com.sparta.sweethoney.domain.user.dto.SignupRequestDto;
 import com.sparta.sweethoney.domain.user.dto.SignupResponseDto;
 import com.sparta.sweethoney.domain.user.service.UserService;
 import com.sparta.sweethoney.util.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users")
-    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signupRequestDto, HttpServletResponse res) {
+    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signupRequestDto, HttpServletResponse res, HttpServletRequest request) {
         return ResponseEntity.ok(userService.signup(signupRequestDto, res));
     }
 
