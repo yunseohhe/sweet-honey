@@ -1,2 +1,7 @@
-package com.sparta.sweethoney.domain.user.entitiy;public class User {
+package com.sparta.sweethoney.domain.user.entitiy;
+
+import jakarta.persistence.Entity;
+
+@Entity
+public class User {
 }
