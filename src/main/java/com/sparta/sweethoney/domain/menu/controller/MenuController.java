@@ -1,6 +1,7 @@
 package com.sparta.sweethoney.domain.menu.controller;
 
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
+import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.dto.response.PutMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +32,11 @@ public class MenuController {
     }
 
     // 메뉴 삭제
+    @DeleteMapping("/{storeId}/menus/{menuId}")
+    public DeleteMenuResponseDto deleteMenu(
+            @PathVariable Long storeId,
+            @PathVariable Long menuId
+    ) {
+        return service.deleteMenu(storeId, menuId);
+    }
 }
