@@ -1,2 +1,4 @@
-package com.sparta.sweethoney.domain.review;public class Revice {
+package com.sparta.sweethoney.domain.review;
+
+public class Review {
 }
