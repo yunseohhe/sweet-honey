@@ -1,6 +1,5 @@
 package com.sparta.sweethoney.domain.user.dto;
 
-import com.sparta.sweethoney.domain.user.entitiy.User;
 import lombok.Getter;
 import lombok.Setter;
 

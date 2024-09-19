@@ -1,6 +1,5 @@
 package com.sparta.sweethoney.filter;
 
-import com.sparta.sweethoney.domain.user.entitiy.User;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import com.sparta.sweethoney.util.JwtUtil;
 import io.jsonwebtoken.Claims;
