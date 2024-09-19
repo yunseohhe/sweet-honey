@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
      * @param GlobalException e
      * @return ResponseEntity<ErrorResult>
      */
-    @ExceptionHandler
+    @ExceptionHandler(GlobalException.class)
     public ResponseEntity<ErrorResult> handlerGlobalException(GlobalException e) {
         return new ResponseEntity<>(new ErrorResult(e.getMessage()), e.getHttpStatus());
     }

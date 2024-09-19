@@ -1,4 +1,4 @@
 package com.sparta.sweethoney.domain.review;
 
-public class Review {
+public class Revice {
 }
