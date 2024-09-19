@@ -1,10 +1,9 @@
 package com.sparta.sweethoney.domain.menu.entity;
 
+import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
+import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.util.Timestamped;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,5 +18,22 @@ public class Menu extends Timestamped {
     @Enumerated(EnumType.STRING)
     private MenuStatus status;
 
-    // order_id 연결
+    // store_id 연결
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+    /* 메뉴 생성 */
+    public Menu(String name, int price, MenuStatus status, Store store) {
+        this.name = name;
+        this.price = price;
+        this.status = status;
+        this.store = store;
+    }
+
+    /* 메뉴 수정 */
+    public void update(PutMenuRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.price = requestDto.getPrice();
+    }
 }
