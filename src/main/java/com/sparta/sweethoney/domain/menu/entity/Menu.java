@@ -36,4 +36,9 @@ public class Menu extends Timestamped {
         this.name = requestDto.getName();
         this.price = requestDto.getPrice();
     }
+
+    /* 메뉴 삭제 */
+    public void delete(MenuStatus menuStatus) {
+        this.status = menuStatus;
+    }
 }

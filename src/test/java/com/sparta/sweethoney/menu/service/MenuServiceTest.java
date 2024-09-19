@@ -1,6 +1,7 @@
 package com.sparta.sweethoney.menu.service;
 
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
+import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.dto.response.PutMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
@@ -58,5 +59,27 @@ public class MenuServiceTest {
         assertEquals("신라면", responseDto.getName());
         assertEquals(500, responseDto.getPrice());
         assertEquals(1L, responseDto.getId());
+    }
+
+    @Test
+    public void 메뉴_정상_삭제() {
+        // given
+        Long storeId = 1L;
+        Store store = new Store();
+        ReflectionTestUtils.setField(store, "id", storeId);
+
+        Long menuId = 1L;
+        Menu menu = new Menu("라면", 1000, MenuStatus.ACTIVE, store);
+        ReflectionTestUtils.setField(menu, "id", menuId);
+
+        given(storeRepository.findById(store.getId())).willReturn(Optional.of(store));
+        given(menuRepository.findByIdAndStoreId(menuId, store.getId())).willReturn(Optional.of(menu));
+        // when
+        DeleteMenuResponseDto responseDto = menuService.deleteMenu(storeId, menuId);
+
+        // then
+        assertNotNull(responseDto);
+        assertEquals(1L, responseDto.getId());
+        assertEquals(MenuStatus.INACTIVE, menu.getStatus());
     }
 }
