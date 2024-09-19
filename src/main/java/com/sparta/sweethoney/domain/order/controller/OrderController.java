@@ -1,7 +1,11 @@
 package com.sparta.sweethoney.domain.order.controller;
 
-import com.sparta.sweethoney.domain.order.Entity.Order;
+import com.sparta.sweethoney.domain.order.dto.OrderCreateDto;
+import com.sparta.sweethoney.domain.order.dto.OrderFindDto;
+import com.sparta.sweethoney.domain.order.dto.OrderUpdateDto;
+import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
 import com.sparta.sweethoney.domain.order.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,24 +19,38 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping
-    public ResponseEntity<List<OrderDto>> orders() {
-        List<Order> orders = orderService.orderList();
+    /**
+     * 주문을 생성한다.
+     * 1. requestDto
+     * @param requestDto
+     * @param servletRequest
+     * @return
+     */
+    @PostMapping("")
+    public ResponseEntity<OrderCreateDto> createOrder(
+            @RequestBody OrderRequestDto requestDto,
+            HttpServletRequest servletRequest
+    ) {
+        Long userId = (Long) servletRequest.getAttribute("userId");
+        requestDto.setUserId(userId);
+
+        orderService.createOrder(requestDto);
+
         return null;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderFindDto>> orders() {
+        return ResponseEntity.ok(orderService.orderList());
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDto> findOrder(@PathVariable Long orderId) {
-        return null;
-    }
-
-    @PostMapping("/{orderId}")
-    public ResponseEntity<OrderDto> createOrder(@PathVariable Long orderId) {
+    public ResponseEntity<OrderFindDto> findOrder(@PathVariable Long orderId) {
         return null;
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity<OrderDto> updateStatus(@PathVariable Long orderId) {
+    public ResponseEntity<OrderUpdateDto> updateStatus(@PathVariable Long orderId) {
         return null;
     }
 }

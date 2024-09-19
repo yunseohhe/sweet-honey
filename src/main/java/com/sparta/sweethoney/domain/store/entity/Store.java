@@ -7,4 +7,6 @@ import lombok.Getter;
 @Entity
 @Getter
 public class Store extends Timestamped {
+
+    private String storeName;
 }

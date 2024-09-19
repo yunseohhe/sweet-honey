@@ -5,6 +5,7 @@ import com.sparta.sweethoney.domain.user.dto.SigninRequestDto;
 import com.sparta.sweethoney.domain.user.dto.SigninResponseDto;
 import com.sparta.sweethoney.domain.user.dto.SignupRequestDto;
 import com.sparta.sweethoney.domain.user.dto.SignupResponseDto;
+import com.sparta.sweethoney.domain.user.entity.User;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import com.sparta.sweethoney.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
