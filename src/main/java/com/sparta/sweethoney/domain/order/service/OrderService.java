@@ -25,8 +25,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sparta.sweethoney.domain.order.enums.OrderStatus.COMPLETE;
-
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -37,7 +35,6 @@ public class OrderService {
 
     /**
      * 주문을 생성한다.
-     *
      * @param requestDto
      * @return OrderCreateDto
      */
@@ -67,7 +64,6 @@ public class OrderService {
 
     /**
      * 전체 주문 조회 -> 유저가 OWNER || USER 따라서 다름. (미정) -> 가게 사장님도 주문 가
-     *
      * @param userId
      * @return
      */
@@ -136,7 +132,6 @@ public class OrderService {
 
     /**
      * 가게 관리자 검증
-     *
      * @param userId
      * @param order
      * @return

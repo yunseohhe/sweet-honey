@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.sweethoney.domain.order.Entity.Order;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OrderFindDto {
 
     private final Long id;
