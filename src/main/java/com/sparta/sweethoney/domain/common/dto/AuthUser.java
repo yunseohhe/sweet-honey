@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class AuthUser {
-<<<<<<< HEAD
     private final Long id;
     private final String userName;
     private final String email;
@@ -17,7 +16,4 @@ public class AuthUser {
         this.email = email;
         this.userRole = userRole;
     }
-=======
-
->>>>>>> 5487380e2e759cbf7ba9d09f10331bbe573975d3
 }
