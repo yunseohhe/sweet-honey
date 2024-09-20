@@ -1,6 +1,7 @@
 package com.sparta.sweethoney.domain.user.service;
 
 import com.sparta.sweethoney.config.PasswordEncoder;
+import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.user.dto.request.DeleteUserRequestDto;
 import com.sparta.sweethoney.domain.user.dto.request.SigninRequestDto;
 import com.sparta.sweethoney.domain.user.dto.response.SigninResponseDto;
@@ -63,19 +64,20 @@ public class UserService {
         return new SigninResponseDto(token);
     }
 
-//    public String deleteUser(DeleteUserRequestDto deleteUserRequestDto, Long userId) {
-//        // 사용자 확인
-//        User user = userRepository.findById(userId).orElseThrow(() ->
-//                new IllegalArgumentException("유효하지 않은 사용자입니다."));
-//
-//        if (!passwordEncoder.matches(deleteUserRequestDto.getPassword(), user.getPassword())) {
-//            throw new IllegalArgumentException("패스워드를 확인해주세요.");
-//        }
-//
-//        User deletedStatusUser = User.deleteUser(user, UserStatus.DELETED);
-//
-//        userRepository.update(deletedStatusUser);
-//        return "회원탈퇴가 정상적으로 되었습니다.";
-//    }
+    public String deleteUser(DeleteUserRequestDto deleteUserRequestDto, AuthUser authUser) {
+        // 사용자 확인
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
+                new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(deleteUserRequestDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("패스워드를 확인해주세요.");
+        }
+        // 유저 상태 DELETED 로 변경
+        user.deleteUser(UserStatus.DELETED);
+
+        userRepository.save(user);
+        return "회원탈퇴가 정상적으로 되었습니다.";
+    }
 
 }

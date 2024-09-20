@@ -38,7 +38,7 @@ public class User extends Timestamped {
         return new User(signupRequestDto.getEmail(), signupRequestDto.getUserName(), password, signupRequestDto.getUserRole(),  UserStatus.ACTIVE);
     }
 
-//    public static User deleteUser(User user, UserStatus userStatus) {
-//        return new User(user.getEmail(), user.getUserName(), user.password, user.getUserRole(), userStatus);
-//    }
+    public void deleteUser(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
 }
