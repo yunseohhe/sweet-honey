@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.util;
+package com.sparta.sweethoney.domain.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

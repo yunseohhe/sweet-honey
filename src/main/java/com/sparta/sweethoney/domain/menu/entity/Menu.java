@@ -1,8 +1,9 @@
 package com.sparta.sweethoney.domain.menu.entity;
 
+import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.store.entity.Store;
-import com.sparta.sweethoney.util.Timestamped;
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +25,9 @@ public class Menu extends Timestamped {
     private Store store;
 
     /* 메뉴 생성 */
-    public Menu(String name, int price, MenuStatus status, Store store) {
-        this.name = name;
-        this.price = price;
+    public Menu(PostMenuRequestDto requestDto, MenuStatus status, Store store) {
+        this.name = requestDto.getName();
+        this.price = requestDto.getPrice();
         this.status = status;
         this.store = store;
     }

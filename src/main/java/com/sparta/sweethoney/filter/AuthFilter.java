@@ -29,7 +29,7 @@ public class AuthFilter implements Filter {
         String url = httpServletRequest.getRequestURI();
 
         if (StringUtils.hasText(url) &&
-                (url.startsWith("/users") )
+                (url.startsWith("/users") || (url.startsWith("/users/login")) )
         ) {
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {
@@ -49,10 +49,9 @@ public class AuthFilter implements Filter {
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(token);
                 Long userId = Long.valueOf(info.getSubject());
-                User user = userRepository.findById(userId).orElseThrow(() -> {
-                            return new NullPointerException("Not Found User");
-                        }
-                );
+                User user = userRepository.findById(userId).orElseThrow(() ->
+                            new NullPointerException("Not Found User")
+                        );
 
                 request.setAttribute("userId", user.getId());
                 request.setAttribute("userName", user.getUserName());
