@@ -4,6 +4,7 @@ import com.sparta.sweethoney.domain.order.dto.OrderCreateDto;
 import com.sparta.sweethoney.domain.order.dto.OrderFindDto;
 import com.sparta.sweethoney.domain.order.dto.OrderUpdateDto;
 import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
+import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.order.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,14 @@ public class OrderController {
 
     /**
      * 주문을 생성한다.
-     * 1. requestDto
+     * 1. requestDto 필드 -> 메뉴, 가게 ID
+     * 2. servletRequest 내부 저장된 회원 ID를 꺼낸다.
+     * 3. UserId를 requestDto에 담고, 넘겨주면서 `OrderService`호출
      * @param requestDto
      * @param servletRequest
-     * @return
+     * @return ResponseEntity<OrderCreateDto>
      */
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<OrderCreateDto> createOrder(
             @RequestBody OrderRequestDto requestDto,
             HttpServletRequest servletRequest
@@ -34,23 +37,49 @@ public class OrderController {
         Long userId = (Long) servletRequest.getAttribute("userId");
         requestDto.setUserId(userId);
 
-        orderService.createOrder(requestDto);
+        OrderCreateDto orderCreateDto = orderService.createOrder(requestDto);
 
-        return null;
+        return ResponseEntity.ok(orderCreateDto);
     }
 
+    /**
+     * 주문 전체 조회
+     * @param request
+     * @return ResponseEntity<List<OrderFindDto>>
+     */
     @GetMapping
-    public ResponseEntity<List<OrderFindDto>> orders() {
-        return ResponseEntity.ok(orderService.orderList());
+    public ResponseEntity<List<OrderFindDto>> orders(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+
+        List<OrderFindDto> orders = orderService.findAllOrders(userId);
+
+        return ResponseEntity.ok(orders);
     }
 
+    /**
+     * 주문 단건 조회
+     * @param orderId
+     * @return ResponseEntity<OrderFindDto>
+     */
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderFindDto> findOrder(@PathVariable Long orderId) {
-        return null;
+        OrderFindDto order = orderService.findOrder(orderId);
+
+        return ResponseEntity.ok(order);
     }
 
+    /**
+     * 주문 상태 변경
+     * @param orderId
+     * @param orderStatusDto
+     * @return
+     */
     @PatchMapping("/{orderId}")
-    public ResponseEntity<OrderUpdateDto> updateStatus(@PathVariable Long orderId) {
-        return null;
+    public ResponseEntity<OrderUpdateDto> updateStatus(
+            @PathVariable Long orderId,
+            @RequestBody OrderStatus orderStatus
+    ) {
+        OrderUpdateDto orderUpdateDto = orderService.updateStatus(orderId, orderStatus);
+        return ResponseEntity.ok(orderUpdateDto);
     }
 }

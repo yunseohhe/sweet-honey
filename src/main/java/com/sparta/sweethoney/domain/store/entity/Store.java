@@ -8,5 +8,4 @@ import lombok.Getter;
 @Getter
 public class Store extends Timestamped {
 
-    private String storeName;
 }

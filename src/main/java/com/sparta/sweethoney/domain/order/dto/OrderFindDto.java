@@ -2,10 +2,11 @@ package com.sparta.sweethoney.domain.order.dto;
 
 import com.sparta.sweethoney.domain.order.Entity.Order;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class OrderFindDto {
 
     private final Long id;
