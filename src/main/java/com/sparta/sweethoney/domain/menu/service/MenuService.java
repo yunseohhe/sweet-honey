@@ -13,6 +13,10 @@ import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.repository.StoreRepository;
+import com.sparta.sweethoney.domain.user.entity.User;
+import com.sparta.sweethoney.domain.user.entity.UserRole;
+import com.sparta.sweethoney.domain.user.entity.UserStatus;
+import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,18 +26,22 @@ import org.springframework.stereotype.Service;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
     /* 메뉴 생성 */
     @Transactional
     public PostMenuResponseDto addMenu(AuthUser authUser, Long storeId, PostMenuRequestDto requestDto) {
-        // 유저 권한 확인
-        MenuStatus status = requestDto.getStatus();
+        // 유저 확인
+        User user = findUserOrElseThrow(authUser.getId());
+
+        // 삭제된 유저인지 확인 및 권한 확인
+        checkDeletedUserAndPermissions(user.getUserStatus(), user.getUserRole());
 
         // 가게 조회
         Store store = findStoreOrElseThrow(storeId);
 
         // Entity 변환
-        Menu menu = new Menu(requestDto, status, store);
+        Menu menu = new Menu(requestDto, store);
 
         // DB 저장 하면서 responseDto 반환
         return new PostMenuResponseDto(menuRepository.save(menu));
@@ -41,7 +49,13 @@ public class MenuService {
 
     /* 메뉴 수정 */
     @Transactional
-    public PutMenuResponseDto updateMenu(Long storeId, Long menuId, PutMenuRequestDto requestDto) {
+    public PutMenuResponseDto updateMenu(AuthUser authUser, Long storeId, Long menuId, PutMenuRequestDto requestDto) {
+        // 유저 확인
+        User user = findUserOrElseThrow(authUser.getId());
+
+        // 삭제된 유저인지 확인 및 권한 확인
+        checkDeletedUserAndPermissions(user.getUserStatus(), user.getUserRole());
+
         // 가게 조회
         Store store = findStoreOrElseThrow(storeId);
 
@@ -57,7 +71,13 @@ public class MenuService {
 
     /* 메뉴 삭제 */
     @Transactional
-    public DeleteMenuResponseDto deleteMenu(Long storeId, Long menuId) {
+    public DeleteMenuResponseDto deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
+        // 유저 확인
+        User user = findUserOrElseThrow(authUser.getId());
+
+        // 삭제된 유저인지 확인 및 권한 확인
+        checkDeletedUserAndPermissions(user.getUserStatus(), user.getUserRole());
+
         // 가게 조회
         Store store = findStoreOrElseThrow(storeId);
 
@@ -74,6 +94,25 @@ public class MenuService {
 
         // Dto 반환
         return new DeleteMenuResponseDto(menu);
+    }
+
+    /* 유저 확인 */
+    private User findUserOrElseThrow(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 유저 입니다."));
+    }
+
+    /* 삭제된 유저인지 확인 및 권한 확인 */
+    private void checkDeletedUserAndPermissions(UserStatus status, UserRole role) {
+        // 유저 삭제된 유저인지 확인
+        if (status == UserStatus.DELETED) {
+            throw new IllegalArgumentException("존재하지 않는 유저 입니다.");
+        }
+
+        // 유저 권한 확인
+        if (role == UserRole.GUEST) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
     }
 
     /* 가게 조회 */
