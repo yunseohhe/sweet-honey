@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.domain.user.dto;
+package com.sparta.sweethoney.domain.common.dto;
 
 import lombok.Getter;
 

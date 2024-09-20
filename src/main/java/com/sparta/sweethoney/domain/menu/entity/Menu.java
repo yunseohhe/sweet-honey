@@ -2,7 +2,7 @@ package com.sparta.sweethoney.domain.menu.entity;
 
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.store.entity.Store;
-import com.sparta.sweethoney.util.Timestamped;
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

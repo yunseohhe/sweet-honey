@@ -1,6 +1,5 @@
-package com.sparta.sweethoney.exception;
+package com.sparta.sweethoney.domain.common.exception;
 
-import com.sparta.sweethoney.exception.orderexception.NoOrdersFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

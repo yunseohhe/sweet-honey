@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.annotation;
+package com.sparta.sweethoney.domain.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,5 @@
 package com.sparta.sweethoney.domain.menu.controller;
 
-import com.sparta.sweethoney.annotation.Auth;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
