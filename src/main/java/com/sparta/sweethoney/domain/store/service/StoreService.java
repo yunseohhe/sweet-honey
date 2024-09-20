@@ -1,7 +1,9 @@
 package com.sparta.sweethoney.domain.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
-import com.sparta.sweethoney.domain.menu.dto.response.PutMenuResponseDto;
+import com.sparta.sweethoney.domain.menu.dto.response.GetMenuResponseDto;
+import com.sparta.sweethoney.domain.menu.entity.Menu;
+import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
@@ -13,6 +15,7 @@ import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,12 +47,7 @@ public class StoreService {
 
         Store savedStore = storeRepository.save(newStore);
 
-        return new StoreResponse(
-                savedStore.getId(),
-                savedStore.getName(),
-                savedStore.getOpenTime(),
-                savedStore.getCloseTime(),
-                savedStore.getMinOrderPrice());
+        return mapToStoreResponse(savedStore);
     }
 
     // 가게 수정 로직
@@ -69,13 +67,7 @@ public class StoreService {
                 storeUpdateRequest.getCloseTime(),
                 storeUpdateRequest.getMinOrderPrice());
 
-        return new StoreResponse(
-                store.getId(),
-                store.getName(),
-                store.getOpenTime(),
-                store.getCloseTime(),
-                store.getMinOrderPrice()
-        );
+        return mapToStoreResponse(store);
     }
 
     //가게 일괄 조회
@@ -83,13 +75,7 @@ public class StoreService {
         List<Store> storeList = storeRepository.findAll();
 
         return storeList.stream()
-                .map(store -> new StoreResponse(
-                        store.getId(),
-                        store.getName(),
-                        store.getOpenTime(),
-                        store.getCloseTime(),
-                        store.getMinOrderPrice()
-                ))
+                .map(this::mapToStoreResponse)
                 .collect(Collectors.toList());
     }
 
@@ -98,9 +84,14 @@ public class StoreService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
-        List<PutMenuResponseDto> menuList = menuRepository.findByStoreId(storeId).stream()
-                .map(PostMenuResponseDto::new)
-                .collect(Collectors.toList());
+        // 가게에 등록된 메뉴 목록 조회
+        List<Menu> menus = menuRepository.findByStoreId(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 가게에 등록된 메뉴가 없습니다."));
+
+        List<GetMenuResponseDto> activeMenus = menus.stream()
+                .filter(menu -> menu.getStatus() == MenuStatus.ACTIVE)  // ACTIVE 상태인 메뉴만 필터링
+                .map(GetMenuResponseDto::new)  // GetMenuResponseDto로 변환
+                .toList();
 
         return new StoreDetailResponse(
                 store.getId(),
@@ -108,10 +99,38 @@ public class StoreService {
                 store.getOpenTime(),
                 store.getCloseTime(),
                 store.getMinOrderPrice(),
-                menuList
+                activeMenus
         );
     }
 
-    // 가게 삭제
+    // 가게 폐업
+    @Transactional
+    public void deleteStore(Long storeId, AuthUser authUser) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
+        if (!store.getUser().getId().equals(authUser.getId())) {
+            throw new IllegalStateException("해당 가게의 소유자가 아닙니다.");
+        }
+
+        List<Menu> menuList = menuRepository.findByStoreId(storeId).orElseThrow(() ->
+                new IllegalArgumentException("해당 가게의 메뉴가 없습니다."));
+
+        for (Menu menu : menuList) {
+            menu.delete(MenuStatus.INACTIVE);
+        }
+
+        store.terminated();
+    }
+
+    // StoreResponse 객체 생성 메서드
+    private StoreResponse mapToStoreResponse(Store store) {
+        return new StoreResponse(
+                store.getId(),
+                store.getName(),
+                store.getOpenTime(),
+                store.getCloseTime(),
+                store.getMinOrderPrice()
+        );
+    }
 }
