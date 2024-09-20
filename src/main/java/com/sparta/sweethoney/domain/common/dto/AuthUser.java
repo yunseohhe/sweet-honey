@@ -4,4 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class AuthUser {
+    private Long id;
+
+    public AuthUser(Long id) {
+        this.id = id;
+    }
 }
