@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.menu.dto.response;
 
+import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import lombok.Getter;
 

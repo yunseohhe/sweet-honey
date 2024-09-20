@@ -79,14 +79,5 @@ public class StoreController {
         return ResponseEntity.ok(storeService.getStore(storeId));
     }
 
-    /**
-     *
-     * @param storeId 가게 ID
-     *
-     * @author 황윤서
-     */
-//    @DeleteMapping("/stores/{storeId}")
-//    public void deleteStore(@PathVariable("storeId") Long storeId) {
-//        storeService.deleteStore(storeId);
-//    }
+
 }
