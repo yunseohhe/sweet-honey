@@ -17,7 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class MenuController {
     private final MenuService service;
 
-    // 메뉴 생성
+    /**
+     * 메뉴 추가 API
+     * @param authUser 유저 ID, 유저 이름, 유저 이메일, 유저 권한
+     * @param storeId 가게 ID
+     * @param requestDto 메뉴 이름, 메뉴 가격, 메뉴 상태
+     * @return 메뉴 ID, 메뉴 이름, 메뉴 가격, 메뉴 상태
+     */
     @PostMapping("{storeId}/menus")
     public PostMenuResponseDto addMenu(
             @Auth AuthUser authUser,
@@ -37,11 +43,12 @@ public class MenuController {
      */
     @PutMapping("/{storeId}/menus/{menuId}")
     public PutMenuResponseDto updateMenu(
+            @Auth AuthUser authUser,
             @PathVariable Long storeId,
             @PathVariable Long menuId,
             @RequestBody PutMenuRequestDto requestDto
     ) {
-        return service.updateMenu(storeId, menuId, requestDto);
+        return service.updateMenu(authUser, storeId, menuId, requestDto);
     }
 
     /**
@@ -52,9 +59,10 @@ public class MenuController {
      */
     @DeleteMapping("/{storeId}/menus/{menuId}")
     public DeleteMenuResponseDto deleteMenu(
+            @Auth AuthUser authUser,
             @PathVariable Long storeId,
             @PathVariable Long menuId
     ) {
-        return service.deleteMenu(storeId, menuId);
+        return service.deleteMenu(authUser, storeId, menuId);
     }
 }
