@@ -103,8 +103,25 @@ public class StoreService {
         );
     }
 
+    // 가게 폐업
+    @Transactional
+    public void deleteStore(Long storeId, AuthUser authUser) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
+        if (!store.getUser().getId().equals(authUser.getId())) {
+            throw new IllegalStateException("해당 가게의 소유자가 아닙니다.");
+        }
 
+        List<Menu> menuList = menuRepository.findByStoreId(storeId).orElseThrow(() ->
+                new IllegalArgumentException("해당 가게의 메뉴가 없습니다."));
+
+        for (Menu menu : menuList) {
+            menu.delete(MenuStatus.INACTIVE);
+        }
+
+        store.terminated();
+    }
 
     // StoreResponse 객체 생성 메서드
     private StoreResponse mapToStoreResponse(Store store) {
