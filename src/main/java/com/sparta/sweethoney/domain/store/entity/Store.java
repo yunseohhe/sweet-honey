@@ -30,7 +30,7 @@ public class Store extends Timestamped {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StoreStatus status = StoreStatus.OPERATING;
+    private StoreStatus storeStatus = StoreStatus.OPERATING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -44,6 +44,7 @@ public class Store extends Timestamped {
         this.user = user;
     }
 
+    /* 가게 최소 가격 */
     public void setMinOrderPrice(int minOrderPrice) {
         if (minOrderPrice < 0) {
             throw new IllegalArgumentException("최소 주문 금액은 0 이상이어야 합니다.");
@@ -52,10 +53,16 @@ public class Store extends Timestamped {
         this.minOrderPrice = minOrderPrice;
     }
 
+    /* 가게 수정 */
     public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
         this.name = name;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.minOrderPrice = minOrderPrice;
+    }
+
+    /* 가게 폐업 */
+    public void terminated() {
+        this.storeStatus = storeStatus.TERMINATED;
     }
 }
