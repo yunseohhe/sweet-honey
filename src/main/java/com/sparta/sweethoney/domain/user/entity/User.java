@@ -1,7 +1,7 @@
 package com.sparta.sweethoney.domain.user.entity;
 
 
-import com.sparta.sweethoney.domain.user.dto.SignupRequestDto;
+import com.sparta.sweethoney.domain.user.dto.request.SignupRequestDto;
 import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,10 +12,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 @NoArgsConstructor
 public class User extends Timestamped {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
 
     private String email;
     private String userName;
@@ -23,10 +19,26 @@ public class User extends Timestamped {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
-    public User(SignupRequestDto signupRequestDto, String password) {
-        this.email = signupRequestDto.getEmail();
-        this.userName = signupRequestDto.getUserName();
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
+
+
+    public User(String email, String userName, String password, UserRole userRole, UserStatus userStatus) {
+        this.email = email;
+        this.userName = userName;
         this.password = password;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
     }
+
+    public static User saveUser(SignupRequestDto signupRequestDto, String password) {
+        return new User(signupRequestDto.getEmail(), signupRequestDto.getUserName(), password, signupRequestDto.getUserRole(),  UserStatus.ACTIVE);
+    }
+
+//    public static User deleteUser(User user, UserStatus userStatus) {
+//        return new User(user.getEmail(), user.getUserName(), user.password, user.getUserRole(), userStatus);
+//    }
 }

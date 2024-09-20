@@ -1,6 +1,10 @@
 package com.sparta.sweethoney.domain.store.entity;
 
+<<<<<<< HEAD
+import com.sparta.sweethoney.domain.menu.entity.Menu;
+=======
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
+>>>>>>> 5487380e2e759cbf7ba9d09f10331bbe573975d3
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -10,11 +14,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class Store extends Timestamped {
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 5487380e2e759cbf7ba9d09f10331bbe573975d3
     @Column(length = 20, nullable = false)
     private String name;
 
@@ -32,11 +43,20 @@ public class Store extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+<<<<<<< HEAD
+
+    public Store(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice, User user) {
+        this.name = name;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.minOrderPrice = minOrderPrice;
+=======
     public Store(StoreRequest storeRequest, User user) {
         this.name = storeRequest.getName();
         this.openTime = storeRequest.getOpenTime();
         this.closeTime = storeRequest.getCloseTime();
         this.minOrderPrice = storeRequest.getMinOrderPrice();
+>>>>>>> 5487380e2e759cbf7ba9d09f10331bbe573975d3
         this.user = user;
     }
 
