@@ -2,11 +2,10 @@ package com.sparta.sweethoney.domain.order.service;
 
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
-import com.sparta.sweethoney.domain.order.dto.OrderCreateDto;
-import com.sparta.sweethoney.domain.order.dto.OrderFindDto;
-import com.sparta.sweethoney.domain.order.dto.OrderUpdateDto;
 import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
-import com.sparta.sweethoney.domain.order.enums.OrderStatus;
+import com.sparta.sweethoney.domain.order.dto.response.OrderCreateDto;
+import com.sparta.sweethoney.domain.order.dto.response.OrderFindDto;
+import com.sparta.sweethoney.domain.order.dto.response.OrderUpdateDto;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.repository.StoreRepository;
 import com.sparta.sweethoney.domain.user.entity.User;
@@ -22,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.util.List;
 
-import static com.sparta.sweethoney.domain.order.enums.OrderStatus.*;
+import static com.sparta.sweethoney.domain.order.enums.OrderStatus.ACCEPTED;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -69,14 +68,14 @@ class OrderServiceTest {
 
         //when
         OrderCreateDto createOrder = orderService.createOrder(orderRequestDto);
-        OrderFindDto findOrder = orderService.findOrder(createOrder.getId());
+        OrderFindDto findOrder = orderService.findOrder(createOrder.getOrderId());
 
         //then
-        assertThat(findOrder.getId()).isEqualTo(createOrder.getId());
+        assertThat(findOrder.getOrderId()).isEqualTo(createOrder.getOrderId());
         assertThat(findOrder.getStoreName()).isEqualTo(createOrder.getStoreName());
         assertThat(findOrder.getUserEmail()).isEqualTo(createOrder.getUserEmail());
-        assertThat(findOrder.getAddress()).isEqualTo(createOrder.getAddress());
-        assertThat(findOrder.getStatus().name()).isEqualTo("PENDING");
+        assertThat(findOrder.getDeliveryAddress()).isEqualTo(createOrder.getDeliveryAddress());
+        assertThat(findOrder.getOrderStatus().name()).isEqualTo("PENDING");
         assertThat(findOrder.getOrderTime()).isEqualTo(createOrder.getOrderTime());
         assertThat(findOrder.getOrderCompleteTime()).isNull();
     }
@@ -159,14 +158,14 @@ class OrderServiceTest {
         OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소지가 바로 여기입니당!!!");
 
         OrderCreateDto createOrder = orderService.createOrder(orderRequestDto);
-        Long orderId = createOrder.getId();
+        Long orderId = createOrder.getOrderId();
 
         //when
         OrderUpdateDto orderUpdateDto = orderService.updateStatus(orderId, storeId, ACCEPTED);
         OrderFindDto findOrder = orderService.findOrder(orderId);
 
         //then
-        assertThat(findOrder.getStatus()).isEqualTo(ACCEPTED);
+        assertThat(findOrder.getOrderStatus()).isEqualTo(ACCEPTED);
     }
 
 

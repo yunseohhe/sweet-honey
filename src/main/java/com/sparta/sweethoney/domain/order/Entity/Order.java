@@ -20,7 +20,6 @@ import static com.sparta.sweethoney.domain.order.enums.OrderStatus.COMPLETE;
 @Getter
 @NoArgsConstructor
 public class Order {
-
     @Id
     @GeneratedValue
     private Long id;

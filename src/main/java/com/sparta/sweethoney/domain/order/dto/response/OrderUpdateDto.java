@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.domain.order.dto;
+package com.sparta.sweethoney.domain.order.dto.response;
 
 import com.sparta.sweethoney.domain.order.Entity.Order;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
@@ -7,13 +7,13 @@ import lombok.Getter;
 @Getter
 public class OrderUpdateDto {
 
-    private final Long id;
+    private final Long orderId;
     private final String storeName;
-    private final OrderStatus status;
+    private final OrderStatus orderStatus;
 
     public OrderUpdateDto(Order order) {
-        this.id = order.getId();
+        this.orderId = order.getId();
         this.storeName = order.getStore().getName();
-        this.status = order.getStatus();
+        this.orderStatus = order.getStatus();
     }
 }

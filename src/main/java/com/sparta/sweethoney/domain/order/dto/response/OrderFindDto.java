@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.domain.order.dto;
+package com.sparta.sweethoney.domain.order.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.sweethoney.domain.order.Entity.Order;
@@ -11,27 +11,27 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OrderFindDto {
 
-    private final Long id;
-    private final int amount;
+    private final Long orderId;
+    private final int orderAmount;
 
     private final String storeName;
     private final String userEmail;
     private final String menuName;
-    private final String address;
+    private final String deliveryAddress;
 
-    private final OrderStatus status;
+    private final OrderStatus orderStatus;
 
     private final LocalDateTime orderTime;
     private final LocalDateTime orderCompleteTime;
 
     public OrderFindDto(Order order) {
-        this.id = order.getId();
-        this.amount = order.getAmount();
+        this.orderId = order.getId();
+        this.orderAmount = order.getAmount();
         this.storeName = order.getStore().getName();
         this.userEmail = order.getUser().getUserName();
         this.menuName = order.getMenu().getName();
-        this.address = order.getDeliveryAddress();
-        this.status = order.getStatus();
+        this.deliveryAddress = order.getDeliveryAddress();
+        this.orderStatus = order.getStatus();
         this.orderTime = order.getOrderTime();
         this.orderCompleteTime = order.getOrderCompleteTime();
     }
