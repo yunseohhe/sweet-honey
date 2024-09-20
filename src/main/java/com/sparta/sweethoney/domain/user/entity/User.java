@@ -2,7 +2,7 @@ package com.sparta.sweethoney.domain.user.entity;
 
 
 import com.sparta.sweethoney.domain.user.dto.SignupRequestDto;
-import com.sparta.sweethoney.util.Timestamped;
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

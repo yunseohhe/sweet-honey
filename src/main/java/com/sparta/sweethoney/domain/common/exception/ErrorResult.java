@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.exception;
+package com.sparta.sweethoney.domain.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
