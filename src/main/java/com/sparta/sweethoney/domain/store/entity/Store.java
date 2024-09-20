@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.store.entity;
 
+import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -9,15 +10,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class Store extends Timestamped {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
 
     @Column(length = 20, nullable = false)
     private String name;
@@ -35,6 +35,7 @@ public class Store extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
 
     public Store(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice, User user) {
         this.name = name;

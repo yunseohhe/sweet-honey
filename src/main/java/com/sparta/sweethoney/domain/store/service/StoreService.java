@@ -34,9 +34,9 @@ public class StoreService {
                 .orElseThrow(() -> new IllegalArgumentException("사장님을 찾을 수 없습니다."));
 
         // 사장님이 운영 중인 가게 수 제한 확인 (최대 3개)
-        if (storeRepository.countByOwner(owner) >= 3) {
-            throw new IllegalStateException("사장님은 최대 3개의 가게만 운영할 수 있습니다.");
-        }
+//        if (storeRepository.countByOwner(owner) >= 3) {
+//            throw new IllegalStateException("사장님은 최대 3개의 가게만 운영할 수 있습니다.");
+//        }
 
         Store newStore = new Store(
                 storeSaveRequest.getName(),
