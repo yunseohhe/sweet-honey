@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.store.entity;
 
+import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -14,11 +15,6 @@ import java.time.LocalTime;
 @Entity
 @NoArgsConstructor
 public class Store extends Timestamped {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
-
     @Column(length = 20, nullable = false)
     private String name;
 
@@ -36,11 +32,11 @@ public class Store extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Store(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice, User user) {
-        this.name = name;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.minOrderPrice = minOrderPrice;
+    public Store(StoreRequest storeRequest, User user) {
+        this.name = storeRequest.getName();
+        this.openTime = storeRequest.getOpenTime();
+        this.closeTime = storeRequest.getCloseTime();
+        this.minOrderPrice = storeRequest.getMinOrderPrice();
         this.user = user;
     }
 
@@ -54,11 +50,11 @@ public class Store extends Timestamped {
     }
 
     /* 가게 수정 */
-    public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
-        this.name = name;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.minOrderPrice = minOrderPrice;
+    public void update(StoreRequest storeRequest) {
+        this.name = storeRequest.getName();
+        this.openTime = storeRequest.getOpenTime();
+        this.closeTime = storeRequest.getCloseTime();
+        this.minOrderPrice = storeRequest.getMinOrderPrice();
     }
 
     /* 가게 폐업 */
