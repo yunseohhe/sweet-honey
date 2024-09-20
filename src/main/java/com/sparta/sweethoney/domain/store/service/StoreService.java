@@ -36,17 +36,10 @@ public class StoreService {
         User owner = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사장님을 찾을 수 없습니다."));
 
-<<<<<<< HEAD
-        // 사장님이 운영 중인 가게 수 제한 확인 (최대 3개)
-//        if (storeRepository.countByOwner(owner) >= 3) {
-//            throw new IllegalStateException("사장님은 최대 3개의 가게만 운영할 수 있습니다.");
-//        }
-=======
         // 사장님이 운영 중인 가게 수는 최대 3개까지 생성 가능
         if (storeRepository.countByUserId(owner.getId()) == 3) {
             throw new GlobalException(GlobalExceptionConst.MAX_STORE_LIMIT);
         }
->>>>>>> 5487380e2e759cbf7ba9d09f10331bbe573975d3
 
         // Entity 변환
         Store newStore = new Store(storeSaveRequest, owner);

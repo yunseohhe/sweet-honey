@@ -6,7 +6,6 @@ import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.service.StoreService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
