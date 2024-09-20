@@ -4,7 +4,9 @@ import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.order.dto.OrderCreateDto;
 import com.sparta.sweethoney.domain.order.dto.OrderFindDto;
+import com.sparta.sweethoney.domain.order.dto.OrderUpdateDto;
 import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
+import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.repository.StoreRepository;
 import com.sparta.sweethoney.domain.user.entity.User;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.util.List;
 
+import static com.sparta.sweethoney.domain.order.enums.OrderStatus.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -127,11 +130,43 @@ class OrderServiceTest {
     @Test
     void updateStatus() {
         //given
+        Long userId = 1L;
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Long storeUserId = 2L;
+        User storeUser = new User();
+        ReflectionTestUtils.setField(user, "id", storeUser);
+
+        Long storeId = 1L;
+        Store store = new Store();
+        ReflectionTestUtils.setField(store, "storeId", storeId);
+        ReflectionTestUtils.setField(store, "user", storeUser);
+        ReflectionTestUtils.setField(store, "openTime", LocalTime.now().minusHours(2));
+        ReflectionTestUtils.setField(store, "closeTime", LocalTime.now().plusHours(2));
+        ReflectionTestUtils.setField(store, "minOrderPrice", 10000);
+
+        Long menuId = 1L;
+        Menu menu = new Menu();
+        ReflectionTestUtils.setField(menu, "id", menuId);
+        ReflectionTestUtils.setField(menu, "price", 15000);
+
+        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(storeUser)).thenReturn(storeUser);
+        when(storeRepository.save(store)).thenReturn(store);
+        when(menuRepository.save(menu)).thenReturn(menu);
+
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소지가 바로 여기입니당!!!");
+
+        OrderCreateDto createOrder = orderService.createOrder(orderRequestDto);
+        Long orderId = createOrder.getId();
 
         //when
+        OrderUpdateDto orderUpdateDto = orderService.updateStatus(orderId, storeId, ACCEPTED);
+        OrderFindDto findOrder = orderService.findOrder(orderId);
 
         //then
-
+        assertThat(findOrder.getStatus()).isEqualTo(ACCEPTED);
     }
 
 

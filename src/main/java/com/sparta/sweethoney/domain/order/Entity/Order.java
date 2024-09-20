@@ -11,13 +11,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+import static com.sparta.sweethoney.domain.order.enums.OrderStatus.COMPLETE;
 
 @Entity
 @Table(name = "orders")
 @Getter
-@Setter
 @NoArgsConstructor
-public class Order extends Timestamped {
+public class Order {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -46,6 +52,18 @@ public class Order extends Timestamped {
         this.orderTime = orderTime;
         this.deliveryAddress = deliveryAddress;
         this.amount = amount;
+        this.status = status;
+    }
+
+    /**
+     * 주문 상태 변경할 때, 완료면 시간도 넣어준다.
+     * @param status
+     */
+    public void updateStatus(OrderStatus status) {
+        if (status.equals(COMPLETE)) {
+            this.orderCompleteTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        }
+
         this.status = status;
     }
 }

@@ -85,7 +85,6 @@ public class OrderService {
 
     /**
      * 주문 단건 조회
-     *
      * @param orderId
      * @return OrderFindDto
      */
@@ -98,7 +97,6 @@ public class OrderService {
 
     /**
      * 주문 상태 변경
-     *
      * @param orderId
      * @param status
      * @return OrderUpdateDto
@@ -112,19 +110,14 @@ public class OrderService {
             throw new UnauthorizedAccessException();
         }
 
-        // 배달 완료 상태로 변경 시, 시간 기록
-        if (status.equals(COMPLETE)) {
-            order.setOrderCompleteTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
-        }
-
-        order.setStatus(status);
+        //주문 상태 수정 -> 상태 : COMPLETE 이면 주문 완료 시간 같이 담아준다.
+        order.updateStatus(status);
 
         return new OrderUpdateDto(order);
     }
 
     /**
      * 영엽시간, 최소금액 검증
-     *
      * @param orderTime
      * @param store
      * @param menu
