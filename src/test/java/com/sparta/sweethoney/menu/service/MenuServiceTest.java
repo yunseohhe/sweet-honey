@@ -5,6 +5,7 @@ import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
+import com.sparta.sweethoney.domain.menu.dto.response.PostMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.dto.response.PutMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
@@ -26,6 +27,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +43,40 @@ public class MenuServiceTest {
 
     @InjectMocks
     private MenuService menuService;
+
+    @Test
+    public void 메뉴_정상_등록() {
+        // given
+        Long userId = 1L;
+        AuthUser authUser = new AuthUser(userId, "name", "a@a.com", UserRole.OWNER);
+
+        User user = new User("a@a.com", "name", "password", authUser.getUserRole(), UserStatus.ACTIVE);
+
+        Long storeId = 1L;
+        Store store = new Store();
+        ReflectionTestUtils.setField(store, "id", storeId);
+
+        PostMenuRequestDto PostRequestDto = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(PostRequestDto, "name", "라면");
+        ReflectionTestUtils.setField(PostRequestDto, "price", 1000);
+        ReflectionTestUtils.setField(PostRequestDto, "status", MenuStatus.ACTIVE);
+
+        Menu menu = new Menu(PostRequestDto, store);
+        ReflectionTestUtils.setField(menu, "id", 1L);
+
+        given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
+        given(storeRepository.findById(store.getId())).willReturn(Optional.of(store));
+        given(menuRepository.save(any())).willReturn(menu);
+
+        // when
+        PostMenuResponseDto responseDto = menuService.addMenu(authUser, storeId, PostRequestDto);
+
+        // then
+        assertNotNull(responseDto);
+        assertEquals("라면", responseDto.getName());
+        assertEquals(1000, responseDto.getPrice());
+        assertEquals(1L, responseDto.getId());
+    }
 
     @Test
     public void 메뉴_정상_수정() {
