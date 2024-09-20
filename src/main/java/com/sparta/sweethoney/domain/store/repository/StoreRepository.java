@@ -6,5 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
     // 사장님이 운영 중인 가게 수 조회
+<<<<<<< HEAD
 //    int countByOwner(User owner);
+=======
+    int countByUserId(Long userId);
+>>>>>>> 5487380e2e759cbf7ba9d09f10331bbe573975d3
 }
