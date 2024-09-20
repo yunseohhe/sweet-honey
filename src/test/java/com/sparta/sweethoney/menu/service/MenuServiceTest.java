@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.menu.service;
 
+import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.dto.response.PutMenuResponseDto;
@@ -40,8 +41,15 @@ public class MenuServiceTest {
         Store store = new Store();
         ReflectionTestUtils.setField(store, "id", storeId);
 
+        PostMenuRequestDto PostRequestDto = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(PostRequestDto, "name", "라면");
+        ReflectionTestUtils.setField(PostRequestDto, "price", 1000);
+        ReflectionTestUtils.setField(PostRequestDto, "status", MenuStatus.ACTIVE);
+
+        MenuStatus status = PostRequestDto.getStatus();
+
         Long menuId = 1L;
-        Menu menu = new Menu("라면", 1000, MenuStatus.ACTIVE, store);
+        Menu menu = new Menu(PostRequestDto, status, store);
         ReflectionTestUtils.setField(menu, "id", menuId);
 
         PutMenuRequestDto requestDto = new PutMenuRequestDto();
@@ -68,8 +76,15 @@ public class MenuServiceTest {
         Store store = new Store();
         ReflectionTestUtils.setField(store, "id", storeId);
 
+        PostMenuRequestDto PostRequestDto = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(PostRequestDto, "name", "라면");
+        ReflectionTestUtils.setField(PostRequestDto, "price", 1000);
+        ReflectionTestUtils.setField(PostRequestDto, "status", MenuStatus.ACTIVE);
+
+        MenuStatus status = PostRequestDto.getStatus();
+
         Long menuId = 1L;
-        Menu menu = new Menu("라면", 1000, MenuStatus.ACTIVE, store);
+        Menu menu = new Menu(PostRequestDto, status, store);
         ReflectionTestUtils.setField(menu, "id", menuId);
 
         given(storeRepository.findById(store.getId())).willReturn(Optional.of(store));

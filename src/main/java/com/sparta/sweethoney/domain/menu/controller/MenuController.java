@@ -1,5 +1,7 @@
 package com.sparta.sweethoney.domain.menu.controller;
 
+import com.sparta.sweethoney.domain.common.annotation.Auth;
+import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
@@ -17,8 +19,12 @@ public class MenuController {
 
     // 메뉴 생성
     @PostMapping("{storeId}/menus")
-    public PostMenuResponseDto addMenu(@PathVariable Long storeId, @RequestBody PostMenuRequestDto requestDto) {
-        return null;
+    public PostMenuResponseDto addMenu(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId,
+            @RequestBody PostMenuRequestDto requestDto
+    ) {
+        return service.addMenu(authUser, storeId, requestDto);
     }
 
 
