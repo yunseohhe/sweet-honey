@@ -1,6 +1,8 @@
 package com.sparta.sweethoney.domain.menu.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
+import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
+import com.sparta.sweethoney.domain.common.exception.menu.ProductAlreadyStoppedException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.response.DeleteMenuResponseDto;
@@ -64,7 +66,7 @@ public class MenuService {
 
         // 미판매인지 확인
         if (menu.getStatus() == MenuStatus.INACTIVE) {
-            throw new IllegalArgumentException("해당 메뉴는 이미 미판매 입니다.");
+            throw new ProductAlreadyStoppedException();
         }
 
         // 메뉴 삭제(미판매로 변환)
@@ -83,6 +85,6 @@ public class MenuService {
     /* 메뉴 조회 */
     private Menu findMenuOrElseThrow(Long menuId, Long storeId) {
         return menuRepository.findByIdAndStoreId(menuId, storeId).orElseThrow(() ->
-                new IllegalArgumentException("해당 메뉴가 없습니다."));
+                new NotFoundMenuException());
     }
 }
