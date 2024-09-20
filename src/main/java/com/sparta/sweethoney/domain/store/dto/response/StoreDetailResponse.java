@@ -1,8 +1,10 @@
 package com.sparta.sweethoney.domain.store.dto.response;
 
+import com.sparta.sweethoney.domain.menu.dto.response.PostMenuResponseDto;
 import lombok.Getter;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 public class StoreDetailResponse {

@@ -23,7 +23,7 @@ public class OrderCreateDto {
     public OrderCreateDto(Order order) {
         this.id = order.getId();
         this.amount = order.getAmount();
-        this.storeName = order.getStore().getStoreName();
+        this.storeName = order.getStore().getName();
         this.userEmail = order.getUser().getEmail();
         this.menuName = order.getMenu().getName();
         this.address = order.getDeliveryAddress();

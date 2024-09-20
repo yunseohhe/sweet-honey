@@ -26,7 +26,7 @@ public class OrderFindDto {
         this.id = order.getId();
         this.amount = order.getAmount();
         this.storeName = order.getUser().getUserName();
-        this.userName = order.getStore().getStoreName();
+        this.userName = order.getStore().getName();
         this.menuName = order.getMenu().getName();
         this.address = order.getDeliveryAddress();
         this.status = order.getStatus();
