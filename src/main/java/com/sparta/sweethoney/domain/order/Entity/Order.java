@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.order.Entity;
 
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.store.entity.Store;
@@ -16,11 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Order {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Order extends Timestamped {
 
     @ManyToOne
     @JoinColumn(name = "user_id")

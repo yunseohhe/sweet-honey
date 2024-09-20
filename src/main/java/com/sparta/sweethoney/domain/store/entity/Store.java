@@ -1,10 +1,9 @@
 package com.sparta.sweethoney.domain.store.entity;
 
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
-import com.sparta.sweethoney.domain.common.entity.Timestamped;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

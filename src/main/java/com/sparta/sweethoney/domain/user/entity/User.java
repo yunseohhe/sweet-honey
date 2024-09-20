@@ -23,7 +23,6 @@ public class User extends Timestamped {
     @Column(name = "password", nullable = false)
     private String password;
 
-
     public User(SignupRequestDto signupRequestDto, String password) {
         this.email = signupRequestDto.getEmail();
         this.userName = signupRequestDto.getUserName();

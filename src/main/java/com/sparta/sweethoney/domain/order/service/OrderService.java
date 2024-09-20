@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.order.service;
 
+import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.order.*;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
@@ -41,9 +42,9 @@ public class OrderService {
      * @return OrderCreateDto
      */
     public OrderCreateDto createOrder(OrderRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(UserNotFoundException::new);
-        Store store = storeRepository.findById(requestDto.getStoreId()).orElseThrow(StoreNotFoundException::new);
-        Menu menu = menuRepository.findById(requestDto.getMenuId()).orElseThrow(MenuNotFoundException::new);
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundStoreException::new);
+        Store store = storeRepository.findById(requestDto.getStoreId()).orElseThrow(NotFoundStoreException::new);
+        Menu menu = menuRepository.findById(requestDto.getMenuId()).orElseThrow(NotFoundMenuException::new);
 
         //영업시간, 최소금액 검증
         LocalTime orderTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
@@ -74,7 +75,7 @@ public class OrderService {
         List<Order> orders = orderRepository.findAllByUserId(userId);
 
         if (orders.isEmpty()) {
-            throw new OrderNotFoundException();
+            throw new NotFoundOrderException();
         }
 
         return orders.stream()
@@ -90,7 +91,7 @@ public class OrderService {
      */
     public OrderFindDto findOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(OrderNotFoundException::new);
+                .orElseThrow(NotFoundOrderException::new);
 
         return new OrderFindDto(order);
     }
@@ -102,10 +103,16 @@ public class OrderService {
      * @param status
      * @return OrderUpdateDto
      */
-    public OrderUpdateDto updateStatus(Long orderId, OrderStatus status) {
+    public OrderUpdateDto updateStatus(Long orderId, Long userId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(OrderNotFoundException::new);
+                .orElseThrow(NotFoundOrderException::new);
 
+        //가게 관리자만 주문 상태를 변경할 수 있다.
+        if (checkIsNotOwner(userId, order)) {
+            throw new UnauthorizedAccessException();
+        }
+
+        // 배달 완료 상태로 변경 시, 시간 기록
         if (status.equals(COMPLETE)) {
             order.setOrderCompleteTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         }
@@ -117,6 +124,7 @@ public class OrderService {
 
     /**
      * 영엽시간, 최소금액 검증
+     *
      * @param orderTime
      * @param store
      * @param menu
@@ -131,5 +139,16 @@ public class OrderService {
         if (menu.getPrice() < store.getMinOrderPrice()) {
             throw new MinimumOrderAmountException();
         }
+    }
+
+    /**
+     * 가게 관리자 검증
+     *
+     * @param userId
+     * @param order
+     * @return
+     */
+    private static boolean checkIsNotOwner(Long userId, Order order) {
+        return !(order.getStore().getUser().getId().equals(userId));
     }
 }

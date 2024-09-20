@@ -13,7 +13,7 @@ public class OrderFindDto {
     private final int amount;
 
     private final String storeName;
-    private final String userName;
+    private final String userEmail;
     private final String menuName;
     private final String address;
 
@@ -25,8 +25,8 @@ public class OrderFindDto {
     public OrderFindDto(Order order) {
         this.id = order.getId();
         this.amount = order.getAmount();
-        this.storeName = order.getUser().getUserName();
-        this.userName = order.getStore().getName();
+        this.storeName = order.getStore().getName();
+        this.userEmail = order.getUser().getUserName();
         this.menuName = order.getMenu().getName();
         this.address = order.getDeliveryAddress();
         this.status = order.getStatus();
