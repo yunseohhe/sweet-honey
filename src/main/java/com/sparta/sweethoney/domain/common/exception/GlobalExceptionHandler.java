@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
      * 3. 새로 정의한 예외 클래스에 super 생성자로 새로 정의한 `GlobalExceptionConst`를 넣어준다.
      * 4. `GlobalExceptionHandler`는 `GlobalException`을 받아서 상태코드, 메시지를 `ErrorResult`에 넣어서 반환한다.
      *
-     * @param GlobalException e
+     * @param e e
      * @return ResponseEntity<ErrorResult>
      */
     @ExceptionHandler(GlobalException.class)

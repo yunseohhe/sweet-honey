@@ -2,6 +2,7 @@ package com.sparta.sweethoney.domain.order.service;
 
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.order.*;
+import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.order.Entity.Order;
@@ -40,7 +41,7 @@ public class OrderService {
 
     /* 주문 생성 */
     public OrderCreateDto createOrder(OrderRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundStoreException::new);
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
         Store store = storeRepository.findById(requestDto.getStoreId()).orElseThrow(NotFoundStoreException::new);
         Menu menu = menuRepository.findById(requestDto.getMenuId()).orElseThrow(NotFoundMenuException::new);
 
