@@ -52,6 +52,7 @@ public class StoreService {
     // 가게 수정 로직
     @Transactional
     public StoreResponse updateStore(Long storeId, StoreRequest storeUpdateRequest, AuthUser authUser) {
+
         // 가게가 존재하는지 조회
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new GlobalException(NOT_FOUND_STORE));

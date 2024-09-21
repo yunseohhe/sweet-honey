@@ -27,7 +27,7 @@ public class MenuController {
     @PostMapping("{storeId}/menus")
     public PostMenuResponseDto addMenu(
             @Auth AuthUser authUser,
-            @PathVariable Long storeId,
+            @PathVariable("storeId") Long storeId,
             @RequestBody PostMenuRequestDto requestDto
     ) {
         return service.addMenu(authUser, storeId, requestDto);
