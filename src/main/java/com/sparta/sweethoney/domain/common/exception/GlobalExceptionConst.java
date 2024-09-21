@@ -31,7 +31,13 @@ public enum GlobalExceptionConst {
     NOT_OWNER_OF_STORE(HttpStatus.FORBIDDEN, " 해당 가게의 소유자가 아닙니다."),
 
     // store_Exception (상태코드 409)
-    MAX_STORE_LIMIT(HttpStatus.CONFLICT, " 사장님은 최대 3개의 가게만 운영할 수 있습니다.");
+    MAX_STORE_LIMIT(HttpStatus.CONFLICT, " 사장님은 최대 3개의 가게만 운영할 수 있습니다."),
+
+    // Review_Exception (상태코드 400)
+    INVALID_RATING(HttpStatus.BAD_REQUEST, "평점은 1점에서 5점 사이여야 합니다."),
+
+    // Review_Exception (상태코드 403)
+    ORDER_NOT_COMPLETE(HttpStatus.FORBIDDEN, "배달 완료된 주문에만 리뷰를 작성할 수 있습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
