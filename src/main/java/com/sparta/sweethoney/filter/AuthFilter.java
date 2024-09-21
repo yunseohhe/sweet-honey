@@ -28,14 +28,14 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String url = httpServletRequest.getRequestURI();
 
-        if (StringUtils.hasText(url) &&
-                (url.startsWith("/users") || (url.startsWith("/users/login")) )
-        ) {
+        if ("POST".equalsIgnoreCase(httpServletRequest.getMethod()) &&
+                StringUtils.hasText(url) &&
+                (url.startsWith("/users") || url.startsWith("/users/login"))) {
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {
             // 나머지 API 요청은 인증 처리 진행
             // 토큰 확인
-            String tokenValue = jwtUtil.getTokenFromRequest(httpServletRequest);
+            String tokenValue = httpServletRequest.getHeader(jwtUtil.AUTHORIZATION_HEADER);
 
             if (StringUtils.hasText(tokenValue)) { // 토큰이 존재하면 검증 시작
                 // JWT 토큰 substring
@@ -50,8 +50,8 @@ public class AuthFilter implements Filter {
                 Claims info = jwtUtil.getUserInfoFromToken(token);
                 Long userId = Long.valueOf(info.getSubject());
                 User user = userRepository.findById(userId).orElseThrow(() ->
-                            new NullPointerException("Not Found User")
-                        );
+                        new NullPointerException("Not Found User")
+                );
 
                 request.setAttribute("userId", user.getId());
                 request.setAttribute("userName", user.getUserName());

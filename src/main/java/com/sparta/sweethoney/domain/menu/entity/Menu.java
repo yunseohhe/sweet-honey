@@ -25,10 +25,10 @@ public class Menu extends Timestamped {
     private Store store;
 
     /* 메뉴 생성 */
-    public Menu(PostMenuRequestDto requestDto, MenuStatus status, Store store) {
+    public Menu(PostMenuRequestDto requestDto, Store store) {
         this.name = requestDto.getName();
         this.price = requestDto.getPrice();
-        this.status = status;
+        this.status = requestDto.getStatus();
         this.store = store;
     }
 

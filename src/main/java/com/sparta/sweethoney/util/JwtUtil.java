@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -28,10 +29,10 @@ public class JwtUtil {
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
     //encoding decoding algorithm 선언
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-//     @Value("${jwt.secret.key}")
+     @Value("${jwt.secret.key}")
     // Base64 Encode 한 SecretKey
     //application.properties 에서 선언한 jwt.secret.key 를 String으로 저장
-    private String secretKey = "lcKslgMFpdDabKYUOAhvM234oE+YsxfabGbtTSj4VXneMpl85reLyRfiye6wZJIZXMgY+Pu2pxr1zXPqHBuWFA==";
+    private String secretKey;
     //키를 저장할 키클래스 필드선언
     private Key key;
     @PostConstruct
@@ -57,21 +58,6 @@ public class JwtUtil {
     }
 
 
-    public String getTokenFromRequest(HttpServletRequest httpServletRequest) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if(cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
-                    try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {

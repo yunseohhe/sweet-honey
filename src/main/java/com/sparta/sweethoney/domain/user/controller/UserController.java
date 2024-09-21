@@ -33,9 +33,9 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(userService.signIn(signinRequestDto)));
     }
 
-//    @DeleteMapping("/users")
-//    public ResponseEntity<ApiResponse<?>> deleteUser(@RequestBody DeleteUserRequestDto deleteUserRequestDto, @Auth AuthUser authUser) {
-//        return ResponseEntity.ok(ApiResponse.success(userService.deleteUser(deleteUserRequestDto, authUser.getId())));
-//    }
+    @DeleteMapping("/users")
+    public ResponseEntity<ApiResponse<?>> deleteUser(@RequestBody DeleteUserRequestDto deleteUserRequestDto, @Auth AuthUser authUser) {
+        return ResponseEntity.ok(ApiResponse.success(userService.deleteUser(deleteUserRequestDto, authUser)));
+    }
 
 }
