@@ -16,7 +16,6 @@ public enum GlobalExceptionConst {
 
     //order_Exception (상태코드 404)
     NOT_FOUND_ORDER(HttpStatus.NOT_FOUND, " 주문이 존재하지 않습니다."),
-    NOT_FOUND_STORE(HttpStatus.NOT_FOUND, "가게가 존재하지 않습니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원이 존재하지 않습니다."),
 
     // menu_Exception (상태코드 400)

@@ -1,6 +1,5 @@
 package com.sparta.sweethoney.domain.order.Entity;
 
-import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.store.entity.Store;
@@ -8,7 +7,6 @@ import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
