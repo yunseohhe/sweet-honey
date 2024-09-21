@@ -31,7 +31,7 @@ public class Order {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
@@ -40,6 +40,8 @@ public class Order {
 
     private String deliveryAddress;
     private Integer amount;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     public Order(User user, Store store, Menu menu,

@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.order.service;
 
+import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.order.*;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
@@ -40,9 +41,12 @@ public class OrderService {
 
     /* 주문 생성 */
     public OrderCreateDto createOrder(OrderRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundStoreException::new);
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
+        log.info("userLog={}", user);
         Store store = storeRepository.findById(requestDto.getStoreId()).orElseThrow(NotFoundStoreException::new);
+        log.info("storeLog={}", store);
         Menu menu = menuRepository.findById(requestDto.getMenuId()).orElseThrow(NotFoundMenuException::new);
+        log.info("menuLog={}", menu);
 
         //영업시간, 최소금액 검증
         LocalTime orderTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
@@ -58,6 +62,7 @@ public class OrderService {
                 OrderStatus.PENDING
         );
 
+        log.info("저장시작");
         orderRepository.save(order);
 
         return new OrderCreateDto(order);
