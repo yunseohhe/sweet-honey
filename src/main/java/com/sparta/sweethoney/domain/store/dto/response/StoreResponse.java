@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.store.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 import java.time.LocalTime;
@@ -8,8 +9,13 @@ import java.time.LocalTime;
 public class StoreResponse {
     private final Long id;
     private final String name;
+
+    @JsonFormat(pattern = "HH:mm")
     private final LocalTime openTime;
+
+    @JsonFormat(pattern = "HH:mm")
     private final LocalTime closeTime;
+
     private final int minOrderPrice;
 
     public StoreResponse(Long id, String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {

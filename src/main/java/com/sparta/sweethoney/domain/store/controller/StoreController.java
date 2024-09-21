@@ -6,6 +6,7 @@ import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.service.StoreService;
+import com.sparta.sweethoney.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,11 @@ public class StoreController {
      *
      */
     @PostMapping("/stores")
-    public ResponseEntity<StoreResponse> createStore(
+    public ResponseEntity<ApiResponse<?>> createStore(
             @Auth AuthUser authUser,
             @RequestBody StoreRequest storeSaveRequest
     ) {
-        return ResponseEntity.ok(storeService.createStore(authUser, storeSaveRequest));
+        return ResponseEntity.ok(ApiResponse.success(storeService.createStore(authUser, storeSaveRequest)));
     }
 
     /**
@@ -43,12 +44,12 @@ public class StoreController {
      *
      */
     @PutMapping("/stores/{storeId}")
-    public ResponseEntity<StoreResponse> updateStore(
+    public ResponseEntity<ApiResponse<?>> updateStore(
             @PathVariable("storeId") Long storeId,
             @RequestBody StoreRequest storeUpdateRequest,
             @Auth AuthUser authUser
     ) {
-        return ResponseEntity.ok(storeService.updateStore(storeId, storeUpdateRequest, authUser));
+        return ResponseEntity.ok(ApiResponse.success(storeService.updateStore(storeId, storeUpdateRequest, authUser)));
     }
 
     /**
@@ -58,20 +59,20 @@ public class StoreController {
      *
      */
     @GetMapping("/stores")
-    public ResponseEntity<List<StoreResponse>> getStores() {
-        return ResponseEntity.ok(storeService.getStores());
+    public ResponseEntity<ApiResponse<?>> getStores() {
+        return ResponseEntity.ok(ApiResponse.success(storeService.getStores()));
     }
 
     /**
      * 가게 단건 조회 (메뉴 포함)
      *
      * @param storeId 조회할 가게의 ID
-     * @return 조회한 가게 상세 정보(가게 ID, 가게 이름, 가게 오픈시간, 가게 마감 시간, 가게 최소 가격)
+     * @return 조회한 가게 상세 정보(가게 ID, 가게 이름, 가게 오픈시간, 가게 마감 시간, 가게 최소 가격)와 메뉴 정보
      *
      */
     @GetMapping("/stores/{storeId}")
-    public ResponseEntity<StoreDetailResponse> getStore(@PathVariable("storeId") Long storeId) {
-        return ResponseEntity.ok(storeService.getStore(storeId));
+    public ResponseEntity<ApiResponse<?>> getStore(@PathVariable("storeId") Long storeId) {
+        return ResponseEntity.ok(ApiResponse.success(storeService.getStore(storeId)));
     }
 
     /**
@@ -81,7 +82,8 @@ public class StoreController {
      *
      */
     @DeleteMapping("/stores/{storeId}")
-    public void deleteStore(@PathVariable("storeId") Long storeId, @Auth AuthUser authUser) {
+    public ResponseEntity<ApiResponse<?>> deleteStore(@PathVariable("storeId") Long storeId, @Auth AuthUser authUser) {
         storeService.deleteStore(storeId, authUser);
+        return ResponseEntity.ok(ApiResponse.success("폐업 완료되었습니다."));
     }
 }
