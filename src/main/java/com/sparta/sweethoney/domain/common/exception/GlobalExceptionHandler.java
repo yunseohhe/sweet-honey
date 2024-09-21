@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /**
-     * `GlobalException`을 상속받은 예외 클래스를 정의한다. -> super 생성자로 `GlobalExceptionConst`를 넣어준다.
-     * `GlobalExceptionConst` -> 상태코드, 메시지를 필드로 가진다.
-     * `GlobalException`은 하위 생성자에서 넘어온 `GlobalExceptionConst`에서 상태코드, 메시지를 넣어준다.
-     * <p>
-     * `GlobalExceptionHandler`은 `GlobalException`을 받아서 상태코드, 메시지를 `ErrorResult`에 넣어서 반환한다.
+     * 1. `GlobalException`을 상속받은 예외 클래스를 정의한다. -> super 생성자로 `GlobalExceptionConst`를 넣어준다.
+     * 2. `GlobalExceptionConst`는 `ENUM`으로 상태코드, 메시지를 필드로 가진다.
+     * 3. 새로 정의한 예외 클래스에 super 생성자로 새로 정의한 `GlobalExceptionConst`를 넣어준다.
+     * 4. `GlobalExceptionHandler`는 `GlobalException`을 받아서 상태코드, 메시지를 `ErrorResult`에 넣어서 반환한다.
      *
      * @param GlobalException e
      * @return ResponseEntity<ErrorResult>

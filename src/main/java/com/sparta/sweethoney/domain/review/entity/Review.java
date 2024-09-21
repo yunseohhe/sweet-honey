@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.review.entity;
 
+import com.sparta.sweethoney.domain.order.Entity.Order;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
