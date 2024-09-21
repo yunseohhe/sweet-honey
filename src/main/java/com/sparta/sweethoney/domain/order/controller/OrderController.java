@@ -1,9 +1,10 @@
 package com.sparta.sweethoney.domain.order.controller;
 
+import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
+import com.sparta.sweethoney.domain.order.dto.request.OrderUpdateStatusDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderCreateDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderFindDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderUpdateDto;
-import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.order.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +46,7 @@ public class OrderController {
     /**
      * 주문 전체 조회
      * @param request
-     * @return ResponseEntity<List<OrderFindDto>>
+     * @return ResponseEntity<List < OrderFindDto>>
      */
     @GetMapping
     public ResponseEntity<List<OrderFindDto>> orders(HttpServletRequest request) {
@@ -71,16 +72,21 @@ public class OrderController {
     /**
      * 주문 상태 변경
      * @param orderId
-     * @param orderStatusDto
-     * @return
+     * @param orderUpdateStatusDto
+     * @param servletRequest
+     * @return ResponseEntity<OrderUpdateDto>
      */
     @PatchMapping("/{orderId}")
     public ResponseEntity<OrderUpdateDto> updateStatus(
-            @PathVariable Long userId,
             @PathVariable Long orderId,
-            @RequestBody OrderStatus orderStatus
+            @RequestBody OrderUpdateStatusDto orderUpdateStatusDto,
+            HttpServletRequest servletRequest
     ) {
-        OrderUpdateDto orderUpdateDto = orderService.updateStatus(orderId, userId, orderStatus);
+        Long userId = (Long) servletRequest.getAttribute("userId");
+        OrderStatus updateStatus = orderUpdateStatusDto.getStatus();
+
+        OrderUpdateDto orderUpdateDto = orderService.updateStatus(orderId, userId, updateStatus);
+
         return ResponseEntity.ok(orderUpdateDto);
     }
 }
