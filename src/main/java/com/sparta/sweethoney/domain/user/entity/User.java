@@ -34,6 +34,7 @@ public class User extends Timestamped {
         this.userStatus = userStatus;
     }
 
+
     public static User saveUser(SignupRequestDto signupRequestDto, String password) {
         return new User(signupRequestDto.getEmail(), signupRequestDto.getUserName(), password, signupRequestDto.getUserRole(),  UserStatus.ACTIVE);
     }
