@@ -1,5 +1,6 @@
 package com.sparta.sweethoney.domain.menu.repository;
 
+import com.sparta.sweethoney.domain.menu.dto.response.GetMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -9,6 +9,7 @@ import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
 
