@@ -25,6 +25,8 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
+    private Long kakaoId;
+
 
     public User(String email, String userName, String password, UserRole userRole, UserStatus userStatus) {
         this.email = email;
@@ -34,6 +36,15 @@ public class User extends Timestamped {
         this.userStatus = userStatus;
     }
 
+    public User(String email, String userName, String password, UserRole userRole, UserStatus userStatus, Long kakaoId) {
+        this.email = email;
+        this.userName = userName;
+        this.password = password;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
+        this.kakaoId = kakaoId;
+    }
+
 
     public static User saveUser(SignupRequestDto signupRequestDto, String password) {
         return new User(signupRequestDto.getEmail(), signupRequestDto.getUserName(), password, signupRequestDto.getUserRole(),  UserStatus.ACTIVE);
@@ -41,5 +52,10 @@ public class User extends Timestamped {
 
     public void deleteUser(UserStatus userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
