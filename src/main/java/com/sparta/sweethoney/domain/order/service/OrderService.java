@@ -1,6 +1,5 @@
 package com.sparta.sweethoney.domain.order.service;
 
-import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.order.*;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
@@ -9,7 +8,7 @@ import com.sparta.sweethoney.domain.order.Entity.Order;
 import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderCreateDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderFindDto;
-import com.sparta.sweethoney.domain.order.dto.response.OrderUpdateDto;
+import com.sparta.sweethoney.domain.order.dto.response.OrderUpdateStatusResponse;
 import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.order.repository.OrderRepository;
 import com.sparta.sweethoney.domain.store.entity.Store;
@@ -38,15 +37,11 @@ public class OrderService {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
 
-
     /* 주문 생성 */
     public OrderCreateDto createOrder(OrderRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
-        log.info("userLog={}", user);
         Store store = storeRepository.findById(requestDto.getStoreId()).orElseThrow(NotFoundStoreException::new);
-        log.info("storeLog={}", store);
         Menu menu = menuRepository.findById(requestDto.getMenuId()).orElseThrow(NotFoundMenuException::new);
-        log.info("menuLog={}", menu);
 
         //영업시간, 최소금액 검증
         LocalTime orderTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
@@ -58,11 +53,9 @@ public class OrderService {
                 menu,
                 LocalDateTime.of(LocalDate.now(), orderTime),
                 requestDto.getAddress(),
-                menu.getPrice(),
                 OrderStatus.PENDING
         );
 
-        log.info("저장시작");
         orderRepository.save(order);
 
         return new OrderCreateDto(order);
@@ -90,7 +83,7 @@ public class OrderService {
     }
 
     /* 주문 상태 변경 */
-    public OrderUpdateDto updateStatus(Long orderId, Long userId, OrderStatus status) {
+    public OrderUpdateStatusResponse updateStatus(Long orderId, Long userId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(NotFoundOrderException::new);
 
@@ -104,14 +97,26 @@ public class OrderService {
         //주문 상태 수정 -> 상태 : COMPLETE 이면 주문 완료 시간 같이 담아준다.
         order.updateStatus(status);
 
-        return new OrderUpdateDto(order);
+        return new OrderUpdateStatusResponse(order);
     }
 
     /* 영업 시간, 가격 최소 금액 검증 */
     private static void validateTimeAndPrice(LocalTime orderTime, Store store, Menu menu) {
-        //마감시간이 넘으면 주문 할 수 없다.
-        if (orderTime.isAfter(store.getCloseTime()) || orderTime.isBefore(store.getOpenTime())) {
-            throw new StoreClosedException();
+        LocalTime openTime = store.getOpenTime();
+        LocalTime closeTime = store.getCloseTime();
+
+        //마감 시간이 자정을 넘었을 때
+        if (closeTime.isBefore(openTime)) {
+            if (orderTime.isBefore(openTime) && orderTime.isAfter(closeTime)) {
+                throw new StoreClosedException();
+            }
+        }
+
+        //마감 시간이 자정을 넘지 않을 때
+        if (closeTime.isAfter(openTime)) {
+            if (orderTime.isBefore(openTime) || orderTime.isAfter(closeTime)) {
+                throw new StoreClosedException();
+            }
         }
 
         //가게가 정한 최소 주문 금액 이상이어야 주문할 수 있다.

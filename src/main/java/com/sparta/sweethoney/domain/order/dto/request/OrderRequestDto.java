@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class OrderRequestDto {
-
     private Long userId;
     private Long storeId;
     private Long menuId;

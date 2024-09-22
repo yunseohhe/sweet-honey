@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OrderFindDto {
-
     private final Long orderId;
     private final int orderAmount;
 
@@ -28,7 +27,7 @@ public class OrderFindDto {
         this.orderId = order.getId();
         this.orderAmount = order.getAmount();
         this.storeName = order.getStore().getName();
-        this.userEmail = order.getUser().getUserName();
+        this.userEmail = order.getUser().getEmail();
         this.menuName = order.getMenu().getName();
         this.deliveryAddress = order.getDeliveryAddress();
         this.orderStatus = order.getStatus();
