@@ -98,7 +98,7 @@ public class OrderService {
         //주문 상태 수정 -> 상태 : COMPLETE 이면 주문 완료 시간 같이 담아준다.
         order.updateStatus(status);
 
-        return new OrderUpdateStatusResponse(order);
+        return new OrderUpdateStatusResponse(order, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
     /* 영업 시간, 가격 최소 금액 검증 */
@@ -122,8 +122,6 @@ public class OrderService {
 
         //가게가 정한 최소 주문 금액 이상이어야 주문할 수 있다.
         if (menu.getPrice() < store.getMinOrderPrice()) {
-            log.info("menu.getPrice()={}", menu.getPrice());
-            log.info("store.getMinOrderPrice()={}", store.getMinOrderPrice());
             throw new MinimumOrderAmountException();
         }
     }
