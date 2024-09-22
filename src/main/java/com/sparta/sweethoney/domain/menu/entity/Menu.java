@@ -20,7 +20,7 @@ public class Menu extends Timestamped {
     private MenuStatus status;
 
     // store_id 연결
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
 
