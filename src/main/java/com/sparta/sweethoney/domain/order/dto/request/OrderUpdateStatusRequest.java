@@ -4,7 +4,6 @@ import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import lombok.Getter;
 
 @Getter
-public class OrderUpdateStatusDto {
-
+public class OrderUpdateStatusRequest {
     private OrderStatus status;
 }
