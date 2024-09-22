@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.sweethoney.config.PasswordEncoder;
+import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserRoleException;
 import com.sparta.sweethoney.domain.user.entity.User;
 import com.sparta.sweethoney.domain.user.entity.UserRole;
 import com.sparta.sweethoney.domain.user.entity.UserStatus;
+import com.sparta.sweethoney.domain.user.kakaoUser.dto.KakaoLoginRequestDto;
 import com.sparta.sweethoney.domain.user.kakaoUser.dto.KakaoUserInfoDto;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import com.sparta.sweethoney.util.JwtUtil;
@@ -33,7 +35,11 @@ public class KakaoUserService {
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
 
-    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public String kakaoLogin(String code, KakaoLoginRequestDto kakaoLoginRequestDto, HttpServletResponse response) throws JsonProcessingException {
+       if (kakaoLoginRequestDto.getUserRole() == null) {
+           throw new NotFoundUserRoleException();
+       }
+
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -41,7 +47,7 @@ public class KakaoUserService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         // 3. 필요시에 회원가입
-        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
+        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo, kakaoLoginRequestDto);
 
         // 4. JWT 토큰 반환
         String createToken =  jwtUtil.createToken(kakaoUser.getId());
@@ -123,7 +129,7 @@ public class KakaoUserService {
         return new KakaoUserInfoDto(id, nickname, email);
     }
 
-    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo, KakaoLoginRequestDto kakaoLoginRequestDto) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
@@ -146,7 +152,7 @@ public class KakaoUserService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(email, kakaoUserInfo.getNickname(), encodedPassword, UserRole.GUEST, UserStatus.ACTIVE, kakaoId);
+                kakaoUser = new User(email, kakaoUserInfo.getNickname(), encodedPassword, kakaoLoginRequestDto.getUserRole(), UserStatus.ACTIVE, kakaoId);
             }
 
             userRepository.save(kakaoUser);

@@ -1,4 +1,4 @@
-package com.sparta.sweethoney.domain.common.exception.order;
+package com.sparta.sweethoney.domain.common.exception.user;
 
 
 import com.sparta.sweethoney.domain.common.exception.GlobalException;
