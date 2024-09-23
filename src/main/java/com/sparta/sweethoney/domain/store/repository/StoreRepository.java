@@ -2,7 +2,6 @@ package com.sparta.sweethoney.domain.store.repository;
 
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
-import com.sparta.sweethoney.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

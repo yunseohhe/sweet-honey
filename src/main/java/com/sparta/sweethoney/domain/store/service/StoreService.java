@@ -11,6 +11,7 @@ import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
+import com.sparta.sweethoney.domain.store.dto.response.StorePutResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.enums.AdStatus;
@@ -54,7 +55,7 @@ public class StoreService {
 
     // 가게 수정 로직
     @Transactional
-    public StoreResponse updateStore(Long storeId, StoreRequest storeUpdateRequest, AuthUser authUser) {
+    public StorePutResponse updateStore(Long storeId, StoreRequest storeUpdateRequest, AuthUser authUser) {
 
         // 가게가 존재하는지 조회
         Store store = storeRepository.findById(storeId)
@@ -68,8 +69,15 @@ public class StoreService {
         // 가게 수정
         store.update(storeUpdateRequest);
 
-        // Dto 반환
-        return mapToStoreResponse(store);
+        // 수정된 가게 정보를 StorePutResponse(DTO)로 반환
+        return new StorePutResponse(
+                store.getId(),
+                store.getName(),
+                store.getOpenTime(),
+                store.getCloseTime(),
+                store.getMinOrderPrice(),
+                store.getNotice()
+        );
     }
 
     // 광고 설정 로직
