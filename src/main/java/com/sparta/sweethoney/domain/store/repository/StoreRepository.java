@@ -13,7 +13,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     int countByUserIdAndStoreStatus(Long userId, StoreStatus status);
 
     // 가게 일괄 조회
-    List<Store> findByStoreStatus(StoreStatus storeStatus);
+    List<Store> findAllByStoreStatusOrderByAdStatusDesc(StoreStatus storeStatus);
 
     // 가게 단건 조회
     Optional<Store> findByIdAndStoreStatus(Long storeId, StoreStatus storeStatus);

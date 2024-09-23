@@ -1,7 +1,6 @@
 package com.sparta.sweethoney.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
-import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.common.exception.store.NotOwnerOfStoreException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
@@ -146,7 +145,7 @@ public class StoreServiceTest {
 
         List<Store> storeList = Arrays.asList(store1, store2, store3);
 
-        given(storeRepository.findByStoreStatus(StoreStatus.OPERATING)).willReturn(storeList);
+        given(storeRepository.findAllByStoreStatusOrderByAdStatusDesc(StoreStatus.OPERATING)).willReturn(storeList);
 
         // when : 가게 일괄 조회 호출
         List<StoreResponse> storeResponses = storeService.getStores();
