@@ -93,7 +93,6 @@ public class StoreServiceTest {
         // when : 가게 수정 요청
         StoreResponse response = storeService.updateStore(storeId, storeUpdateRequest, authUser);
 
-
         // then : 가게가 수정되고, StoreResponse가 반환
         assertNotNull(response);
         assertEquals("수정된가게이름", response.getName());
@@ -125,10 +124,8 @@ public class StoreServiceTest {
             storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500), authUser);
         });
 
-        // 상태 코드와 예외 메시지를 분리하여 검증
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains("NOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다."));
-        assertTrue(actualMessage.contains("403 FORBIDDEN"));
+        assertEquals("403 FORBIDDENNOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
+        assertEquals(403, exception.getHttpStatus().value());
     }
 
     @Test
