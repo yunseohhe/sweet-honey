@@ -14,6 +14,7 @@ import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.entity.Store;
+import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.store.repository.StoreRepository;
 import com.sparta.sweethoney.domain.user.entity.User;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
@@ -41,8 +42,8 @@ public class StoreService {
         User owner = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사장님을 찾을 수 없습니다."));
 
-        // 사장님이 운영 중인 가게 수는 최대 3개까지 생성 가능
-        if (storeRepository.countByUserId(owner.getId()) == 3) {
+        // 사장님이 운영 중인 가게 수는 최대 3개까지 생성 가능 (폐업 상태 가게는 제외)
+        if (storeRepository.countByUserIdAndStoreStatus(owner.getId(), StoreStatus.OPERATING) == 3) {
             throw new MaxStoreLimitException();
         }
 
@@ -75,7 +76,8 @@ public class StoreService {
 
     //가게 일괄 조회
     public List<StoreResponse> getStores() {
-        List<Store> storeList = storeRepository.findAll();
+        // 운영 중인 가게만 조회
+        List<Store> storeList = storeRepository.findByStoreStatus(StoreStatus.OPERATING);
 
         return storeList.stream()
                 .map(this::mapToStoreResponse)
@@ -84,8 +86,8 @@ public class StoreService {
 
     //가게 단건 조회
     public StoreDetailResponse getStore(Long storeId) {
-        // 가게가 존재하는지 조회
-        Store store = storeRepository.findById(storeId)
+        // 운영 중인 가게만 조회
+        Store store = storeRepository.findByIdAndStoreStatus(storeId, StoreStatus.OPERATING)
                 .orElseThrow(NotFoundStoreException::new);
 
         // 가게기준으로 활성화 상태인 메뉴만을 가져오는 로직
@@ -129,10 +131,10 @@ public class StoreService {
             if (menu.getStatus() == MenuStatus.ACTIVE) {
                 menu.delete(MenuStatus.INACTIVE);
             }
-
-            // 가게 폐업
-            store.terminated();
         }
+
+        // 가게 폐업
+        store.terminated();
     }
 
     // StoreResponse 객체 생성 메서드
