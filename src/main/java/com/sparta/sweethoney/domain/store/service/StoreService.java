@@ -131,6 +131,7 @@ public class StoreService {
                 store.getOpenTime(),
                 store.getCloseTime(),
                 store.getMinOrderPrice(),
+                store.getNotice(),
                 activeMenus
         );
     }

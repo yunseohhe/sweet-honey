@@ -41,12 +41,17 @@ public class Store extends Timestamped {
     @Column(nullable = false)
     private AdStatus adStatus = AdStatus.NONE;
 
+    /*공지 필드*/
+    @Column(columnDefinition = "TEXT")
+    private String notice = "";
+
     public Store(StoreRequest storeRequest, User user) {
         this.name = storeRequest.getName();
         this.openTime = storeRequest.getOpenTime();
         this.closeTime = storeRequest.getCloseTime();
         this.minOrderPrice = storeRequest.getMinOrderPrice();
         this.user = user;
+        this.notice = storeRequest.getNotice();
     }
 
     /* 가게 최소 가격 */
@@ -64,6 +69,8 @@ public class Store extends Timestamped {
         this.openTime = storeRequest.getOpenTime();
         this.closeTime = storeRequest.getCloseTime();
         this.minOrderPrice = storeRequest.getMinOrderPrice();
+        // 공지가 없으면 빈 문자열로 처리
+        this.notice = storeRequest.getNotice() != null ? storeRequest.getNotice() : "";
     }
 
     /* 가게 폐업 */

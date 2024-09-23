@@ -21,4 +21,5 @@ public class StoreRequest {
     private LocalTime closeTime;
 
     private int minOrderPrice;
+    private String notice;
 }

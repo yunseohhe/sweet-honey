@@ -1,11 +1,14 @@
 package com.sparta.sweethoney.domain.store.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
 @Getter
+@AllArgsConstructor
 public class StoreResponse {
     private final Long id;
     private final String name;
@@ -17,12 +20,4 @@ public class StoreResponse {
     private final LocalTime closeTime;
 
     private final int minOrderPrice;
-
-    public StoreResponse(Long id, String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
-        this.id = id;
-        this.name = name;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.minOrderPrice = minOrderPrice;
-    }
 }
