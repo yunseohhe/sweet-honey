@@ -1,7 +1,6 @@
 package com.sparta.sweethoney.domain.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
-import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.store.MaxStoreLimitException;
 import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
@@ -25,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.sparta.sweethoney.domain.common.exception.GlobalExceptionConst.*;
 
 @Service
 @RequiredArgsConstructor
@@ -92,9 +89,20 @@ public class StoreService {
     }
 
     //가게 일괄 조회
-    public List<StoreResponse> getStores() {
-        // 운영 중인 가게만 조회
-        List<Store> storeList = storeRepository.findAllByStoreStatusOrderByAdStatusDesc(StoreStatus.OPERATING);
+    public List<StoreResponse> getStores(String name) {
+        // 가게명을 포함하는 가게들만 검색 (name이 null 또는 빈 문자열이 아닐 경우)
+        List<Store> storeList;
+        if (name != null && !name.isBlank()) {
+            storeList = storeRepository.searchStores(name, StoreStatus.OPERATING);
+        } else {
+            // name이 없을 때 모든 가게를 검색하는 걸 막기 위해 빈 리스트 반환 또는 예외 처리
+            throw new NotFoundStoreException();
+        }
+
+        // 포함된 가게명이 존재하는지 확인
+        if (storeList.isEmpty()) {
+            throw new NotFoundStoreException();
+        }
 
         return storeList.stream()
                 .map(this::mapToStoreResponse)

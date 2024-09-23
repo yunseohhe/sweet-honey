@@ -63,7 +63,7 @@ public class StoreController {
     public ResponseEntity<ApiResponse<?>> setAdStatus(
             @PathVariable("storeId") Long storeId,
             @Auth AuthUser authUser,
-            @RequestParam AdStatus adStatus
+            @RequestParam(name = "AdStatus") AdStatus adStatus
     ) {
         storeService.setAdStatus(storeId, authUser, adStatus);
         return ResponseEntity.ok(ApiResponse.success("광고 상태가 변경되었습니다."));
@@ -76,8 +76,8 @@ public class StoreController {
      *
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<?>> getStores() {
-        return ResponseEntity.ok(ApiResponse.success(storeService.getStores()));
+    public ResponseEntity<ApiResponse<?>> getStores(@RequestParam(name = "name", required = false) String name) {
+        return ResponseEntity.ok(ApiResponse.success(storeService.getStores(name)));
     }
 
     /**
