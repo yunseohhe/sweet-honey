@@ -10,11 +10,13 @@ public class PostMenuResponseDto {
     private String name;
     private int price;
     private MenuStatus status;
+    private String imageUrl;
 
     public PostMenuResponseDto(Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();
         this.price = menu.getPrice();
         this.status = menu.getStatus();
+        this.imageUrl = menu.getImageUrl();
     }
 }

@@ -125,7 +125,7 @@ public class StoreServiceTest {
             storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500, "공지"), authUser);
         });
 
-        assertEquals("403 FORBIDDENNOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
+        assertEquals("403 FORBIDDEN NOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
         assertEquals(403, exception.getHttpStatus().value());
     }
 
@@ -181,9 +181,13 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(postMenu3, "price", 3000);
         ReflectionTestUtils.setField(postMenu3, "status", MenuStatus.INACTIVE);
 
-        Menu menu1 = new Menu(postMenu1, store);
-        Menu menu2 = new Menu(postMenu2, store);
-        Menu menu3 = new Menu(postMenu3, store);
+        String imageUrl1 = "http://test-url.com/test1.jpg";
+        String imageUrl2 = "http://test-url.com/test2.jpg";
+        String imageUrl3 = "http://test-url.com/test3.jpg";
+
+        Menu menu1 = new Menu(postMenu1, store, imageUrl1);
+        Menu menu2 = new Menu(postMenu2, store, imageUrl2);
+        Menu menu3 = new Menu(postMenu3, store, imageUrl3);
         List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
 
         given(storeRepository.findByIdAndStoreStatus(storeId, StoreStatus.OPERATING)).willReturn(Optional.of(store));
@@ -231,9 +235,13 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(postMenu3, "price", 3000);
         ReflectionTestUtils.setField(postMenu3, "status", MenuStatus.INACTIVE);
 
-        Menu menu1 = new Menu(postMenu1, store);
-        Menu menu2 = new Menu(postMenu2, store);
-        Menu menu3 = new Menu(postMenu3, store);
+        String imageUrl1 = "http://test-url.com/test1.jpg";
+        String imageUrl2 = "http://test-url.com/test2.jpg";
+        String imageUrl3 = "http://test-url.com/test3.jpg";
+
+        Menu menu1 = new Menu(postMenu1, store, imageUrl1);
+        Menu menu2 = new Menu(postMenu2, store, imageUrl2);
+        Menu menu3 = new Menu(postMenu3, store, imageUrl3);
         List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
 
         given(storeRepository.findById(storeId)).willReturn(Optional.of(store));

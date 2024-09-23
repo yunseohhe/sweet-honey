@@ -10,12 +10,6 @@ public class GetMenuResponseDto {
     private int price;
     private MenuStatus status;
 
-    public GetMenuResponseDto(String name, int price, MenuStatus status) {
-        this.name = name;
-        this.price = price;
-        this.status = status;
-    }
-
     public GetMenuResponseDto(Menu menu) {
         this.name = menu.getName();
         this.price = menu.getPrice();
