@@ -3,18 +3,15 @@ package com.sparta.sweethoney.domain.store.controller;
 import com.sparta.sweethoney.domain.common.annotation.Auth;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
-import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
-import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.service.StoreService;
 import com.sparta.sweethoney.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/stores")
 public class StoreController {
     private final StoreService storeService;
 
@@ -26,7 +23,7 @@ public class StoreController {
      * @return 생성된 가게의 정보(가게 ID, 가게 이름, 가게 오픈시간, 가게 마감 시간, 가게 최소 가격)
      *
      */
-    @PostMapping("/stores")
+    @PostMapping
     public ResponseEntity<ApiResponse<?>> createStore(
             @Auth AuthUser authUser,
             @RequestBody StoreRequest storeSaveRequest
@@ -43,7 +40,7 @@ public class StoreController {
      * @return 수정된 가게 정보(가게 ID, 이름, 가게 오픈시간, 가게 마감 시간, 가게 최소 가격)
      *
      */
-    @PutMapping("/stores/{storeId}")
+    @PutMapping("/{storeId}")
     public ResponseEntity<ApiResponse<?>> updateStore(
             @PathVariable("storeId") Long storeId,
             @RequestBody StoreRequest storeUpdateRequest,
@@ -58,7 +55,7 @@ public class StoreController {
      * @return 모든 가게 정보 목록(가게 ID, 가게 이름, 가게 오픈시간, 가게 마감 시간, 가게 최소 가격)
      *
      */
-    @GetMapping("/stores")
+    @GetMapping
     public ResponseEntity<ApiResponse<?>> getStores() {
         return ResponseEntity.ok(ApiResponse.success(storeService.getStores()));
     }

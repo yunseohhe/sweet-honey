@@ -2,6 +2,10 @@ package com.sparta.sweethoney.domain.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.common.exception.GlobalException;
+import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
+import com.sparta.sweethoney.domain.common.exception.store.MaxStoreLimitException;
+import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
+import com.sparta.sweethoney.domain.common.exception.store.NotOwnerOfStoreException;
 import com.sparta.sweethoney.domain.menu.dto.response.GetMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
@@ -39,7 +43,7 @@ public class StoreService {
 
         // 사장님이 운영 중인 가게 수는 최대 3개까지 생성 가능
         if (storeRepository.countByUserId(owner.getId()) == 3) {
-            throw new GlobalException(MAX_STORE_LIMIT);
+            throw new MaxStoreLimitException();
         }
 
         // Entity 변환
@@ -55,11 +59,11 @@ public class StoreService {
 
         // 가게가 존재하는지 조회
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new GlobalException(NOT_FOUND_STORE));
+                .orElseThrow(NotFoundStoreException::new);
 
         // 현재 로그인한 유저가 가게의 소유주인지 확인
         if (!store.getUser().getId().equals(authUser.getId())) {
-            throw new GlobalException(NOT_OWNER_OF_STORE);
+            throw new NotOwnerOfStoreException();
         }
 
         // 가게 수정
@@ -82,7 +86,7 @@ public class StoreService {
     public StoreDetailResponse getStore(Long storeId) {
         // 가게가 존재하는지 조회
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new GlobalException(NOT_FOUND_STORE));
+                .orElseThrow(NotFoundStoreException::new);
 
         // 가게기준으로 활성화 상태인 메뉴만을 가져오는 로직
         List<GetMenuResponseDto> activeMenus = menuRepository.findByStoreId(storeId)
@@ -91,7 +95,7 @@ public class StoreService {
                         .map(GetMenuResponseDto::new)
                         .toList())
                 // 만약 메뉴가 없을 경우, NOT_FOUND_MENU 예외를 던짐
-                .orElseThrow(() -> new GlobalException(NOT_FOUND_MENU));
+                .orElseThrow(NotFoundMenuException::new);
 
         // Dto 반환
         return new StoreDetailResponse(
@@ -109,16 +113,16 @@ public class StoreService {
     public void deleteStore(Long storeId, AuthUser authUser) {
         // 가게가 존재하는지 조회
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new GlobalException(NOT_FOUND_STORE));
+                .orElseThrow(NotFoundStoreException::new);
 
         // 현재 로그인한 유저가 가게의 소유주인지 확인
         if (!store.getUser().getId().equals(authUser.getId())) {
-            throw new GlobalException(NOT_OWNER_OF_STORE);
+            throw new NotOwnerOfStoreException();
         }
 
         // 등록되있는 메뉴가 있는지 확인 후
-        List<Menu> menuList = menuRepository.findByStoreId(storeId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_MENU));
+        List<Menu> menuList = menuRepository.findByStoreId(storeId)
+                .orElseThrow(NotFoundMenuException::new);
 
         // 활성화되어 있는 메뉴들은 비활성화 처리
         for (Menu menu : menuList) {
