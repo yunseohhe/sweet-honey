@@ -8,6 +8,7 @@ import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
+import com.sparta.sweethoney.domain.store.dto.response.StorePutResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
@@ -55,7 +56,7 @@ public class StoreServiceTest {
         AuthUser authUser = new AuthUser(userId, "name", "test@gamil.com", UserRole.OWNER);
         User user = new User("test@gamil.com", "name", "password", authUser.getUserRole(), UserStatus.ACTIVE);
 
-        StoreRequest storeRequest = new StoreRequest("test가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000);
+        StoreRequest storeRequest = new StoreRequest("test가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지");
         Store newStore = new Store(storeRequest, user);
 
         given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
@@ -82,16 +83,16 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long storeId = 1L;
-        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000);
+        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지");
         Store originalStore = new Store(storeRequest, user);
         ReflectionTestUtils.setField(originalStore, "id", storeId);
 
-        StoreRequest storeUpdateRequest = new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500);
+        StoreRequest storeUpdateRequest = new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500, "공지");
 
         given(storeRepository.findById(anyLong())).willReturn(Optional.of(originalStore));
 
         // when : 가게 수정 요청
-        StoreResponse response = storeService.updateStore(storeId, storeUpdateRequest, authUser);
+        StorePutResponse response = storeService.updateStore(storeId, storeUpdateRequest, authUser);
 
         // then : 가게가 수정되고, StoreResponse가 반환
         assertNotNull(response);
@@ -113,7 +114,7 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(user2, "id", 2L);
 
         Long storeId = 1L;
-        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000);
+        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지");
         Store originalStore = new Store(storeRequest, user2);
         ReflectionTestUtils.setField(originalStore, "id", storeId);
 
@@ -121,7 +122,7 @@ public class StoreServiceTest {
 
         // when & then: 소유주가 아닐 때 예외 발생 확인
         NotOwnerOfStoreException exception = assertThrows(NotOwnerOfStoreException.class, () -> {
-            storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500), authUser);
+            storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500, "공지"), authUser);
         });
 
         assertEquals("403 FORBIDDENNOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
@@ -131,13 +132,13 @@ public class StoreServiceTest {
     @Test
     public void 가게_일괄_조회_성공() {
         // given : 여러 가게의 데이터가 주어진다.
-        Store store1 = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000), new User());
+        Store store1 = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지"), new User());
         ReflectionTestUtils.setField(store1, "id", 1L);
 
-        Store store2 = new Store(new StoreRequest("가게2", LocalTime.of(8, 0), LocalTime.of(22, 0), 2000), new User());
+        Store store2 = new Store(new StoreRequest("가게2", LocalTime.of(8, 0), LocalTime.of(22, 0), 2000, "공지"), new User());
         ReflectionTestUtils.setField(store2, "id", 2L);
 
-        Store store3 = new Store(new StoreRequest("가게3", LocalTime.of(9, 0), LocalTime.of(23, 0), 3000), new User());
+        Store store3 = new Store(new StoreRequest("가게3", LocalTime.of(9, 0), LocalTime.of(23, 0), 3000, "공지"), new User());
         ReflectionTestUtils.setField(store3, "id", 3L);
 
         List<Store> storeList = Arrays.asList(store1, store2, store3);
@@ -162,7 +163,7 @@ public class StoreServiceTest {
     public void 가게_단건_조회_성공() {
         // given : 가게 데이터와 여러개의 메뉴 데이터가 주어진다.
         Long storeId = 1L;
-        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000), new User());
+        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지"), new User());
         ReflectionTestUtils.setField(store, "id", storeId);
 
         PostMenuRequestDto postMenu1 = new PostMenuRequestDto();
@@ -212,7 +213,7 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long storeId = 1L;
-        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000), user);
+        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지"), user);
         ReflectionTestUtils.setField(store, "id", storeId);
 
         PostMenuRequestDto postMenu1 = new PostMenuRequestDto();
