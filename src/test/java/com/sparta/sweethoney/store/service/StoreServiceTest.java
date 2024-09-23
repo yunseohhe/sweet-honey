@@ -138,14 +138,14 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(store2, "id", 2L);
 
         Store store3 = new Store(new StoreRequest("가게3", LocalTime.of(9, 0), LocalTime.of(23, 0), 3000), new User());
-        ReflectionTestUtils.setField(store2, "id", 3L);
+        ReflectionTestUtils.setField(store3, "id", 3L);
 
         List<Store> storeList = Arrays.asList(store1, store2, store3);
 
-        given(storeRepository.findAllByStoreStatusOrderByAdStatusDesc(StoreStatus.OPERATING)).willReturn(storeList);
+        given(storeRepository.searchStores("%가게%", StoreStatus.OPERATING)).willReturn(storeList);
 
         // when : 가게 일괄 조회 호출
-        List<StoreResponse> storeResponses = storeService.getStores();
+        List<StoreResponse> storeResponses = storeService.getStores("%가게%");
 
         // then : 반환된 가게 리스트 검증
         assertNotNull(storeResponses);
