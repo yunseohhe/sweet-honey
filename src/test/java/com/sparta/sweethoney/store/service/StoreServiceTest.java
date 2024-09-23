@@ -125,7 +125,7 @@ public class StoreServiceTest {
             storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500, "공지"), authUser);
         });
 
-        assertEquals("403 FORBIDDENNOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
+        assertEquals("403 FORBIDDEN NOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
         assertEquals(403, exception.getHttpStatus().value());
     }
 
