@@ -153,7 +153,7 @@ public class MenuServiceTest {
                 });
 
         // then
-        assertEquals("NOT_FOUND_MENU 해당 메뉴가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("400 BAD_REQUESTNOT_FOUND_MENU 해당 메뉴가 존재하지 않습니다.", exception.getMessage());
         assertEquals(400, exception.getHttpStatus().value());
     }
 
