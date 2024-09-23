@@ -6,6 +6,8 @@ import com.amazonaws.util.IOUtils;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.menu.ProductAlreadyStoppedException;
+import com.sparta.sweethoney.domain.common.exception.order.UnauthorizedAccessException;
+import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
 import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.dto.request.PutMenuRequestDto;
@@ -167,19 +169,19 @@ public class MenuService {
     private void checkDeletedUserAndPermissions(UserStatus status, UserRole role) {
         // 유저 삭제된 유저인지 확인
         if (status == UserStatus.DELETED) {
-            throw new IllegalArgumentException("존재하지 않는 유저 입니다.");
+            throw new NotFoundUserException();
         }
 
         // 유저 권한 확인
         if (role == UserRole.GUEST) {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new UnauthorizedAccessException();
         }
     }
 
     /* 가게 조회 */
     private Store findStoreOrElseThrow(Long storeId) {
         return storeRepository.findById(storeId).orElseThrow(() ->
-                new IllegalArgumentException("해당 가게가 없습니다."));
+                new NotFoundStoreException());
     }
 
     /* 메뉴 조회 */
