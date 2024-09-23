@@ -178,7 +178,6 @@ public class MenuServiceTest {
         given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
         given(storeRepository.findById(store.getId())).willReturn(Optional.of(store));
         given(menuRepository.findByIdAndStoreId(menuId, store.getId())).willReturn(Optional.empty());
-        when(s3Client.getUrl(anyString(), anyString())).thenReturn(new URL("http://test-url.com/test.jpg"));
 
         // when
         NotFoundMenuException exception = assertThrows(NotFoundMenuException.class , () ->{
@@ -186,7 +185,7 @@ public class MenuServiceTest {
                 });
 
         // then
-        assertEquals("NOT_FOUND_MENU 해당 메뉴가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("400 BAD_REQUEST NOT_FOUND_MENU 해당 메뉴가 존재하지 않습니다.", exception.getMessage());
         assertEquals(400, exception.getHttpStatus().value());
     }
 

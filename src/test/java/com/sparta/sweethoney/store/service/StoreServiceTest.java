@@ -1,7 +1,6 @@
 package com.sparta.sweethoney.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
-import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.common.exception.store.NotOwnerOfStoreException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
@@ -9,6 +8,7 @@ import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
+import com.sparta.sweethoney.domain.store.dto.response.StorePutResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
@@ -56,7 +56,7 @@ public class StoreServiceTest {
         AuthUser authUser = new AuthUser(userId, "name", "test@gamil.com", UserRole.OWNER);
         User user = new User("test@gamil.com", "name", "password", authUser.getUserRole(), UserStatus.ACTIVE);
 
-        StoreRequest storeRequest = new StoreRequest("test가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000);
+        StoreRequest storeRequest = new StoreRequest("test가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지");
         Store newStore = new Store(storeRequest, user);
 
         given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
@@ -83,17 +83,16 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long storeId = 1L;
-        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000);
+        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지");
         Store originalStore = new Store(storeRequest, user);
         ReflectionTestUtils.setField(originalStore, "id", storeId);
 
-        StoreRequest storeUpdateRequest = new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500);
+        StoreRequest storeUpdateRequest = new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500, "공지");
 
         given(storeRepository.findById(anyLong())).willReturn(Optional.of(originalStore));
 
         // when : 가게 수정 요청
-        StoreResponse response = storeService.updateStore(storeId, storeUpdateRequest, authUser);
-
+        StorePutResponse response = storeService.updateStore(storeId, storeUpdateRequest, authUser);
 
         // then : 가게가 수정되고, StoreResponse가 반환
         assertNotNull(response);
@@ -115,7 +114,7 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(user2, "id", 2L);
 
         Long storeId = 1L;
-        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000);
+        StoreRequest storeRequest = new StoreRequest("원래가게이름", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지");
         Store originalStore = new Store(storeRequest, user2);
         ReflectionTestUtils.setField(originalStore, "id", storeId);
 
@@ -123,33 +122,31 @@ public class StoreServiceTest {
 
         // when & then: 소유주가 아닐 때 예외 발생 확인
         NotOwnerOfStoreException exception = assertThrows(NotOwnerOfStoreException.class, () -> {
-            storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500), authUser);
+            storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500, "공지"), authUser);
         });
 
-        // 상태 코드와 예외 메시지를 분리하여 검증
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains("NOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다."));
-        assertTrue(actualMessage.contains("403 FORBIDDEN"));
+        assertEquals("403 FORBIDDENNOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
+        assertEquals(403, exception.getHttpStatus().value());
     }
 
     @Test
     public void 가게_일괄_조회_성공() {
         // given : 여러 가게의 데이터가 주어진다.
-        Store store1 = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000), new User());
+        Store store1 = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지"), new User());
         ReflectionTestUtils.setField(store1, "id", 1L);
 
-        Store store2 = new Store(new StoreRequest("가게2", LocalTime.of(8, 0), LocalTime.of(22, 0), 2000), new User());
+        Store store2 = new Store(new StoreRequest("가게2", LocalTime.of(8, 0), LocalTime.of(22, 0), 2000, "공지"), new User());
         ReflectionTestUtils.setField(store2, "id", 2L);
 
-        Store store3 = new Store(new StoreRequest("가게3", LocalTime.of(9, 0), LocalTime.of(23, 0), 3000), new User());
-        ReflectionTestUtils.setField(store2, "id", 3L);
+        Store store3 = new Store(new StoreRequest("가게3", LocalTime.of(9, 0), LocalTime.of(23, 0), 3000, "공지"), new User());
+        ReflectionTestUtils.setField(store3, "id", 3L);
 
         List<Store> storeList = Arrays.asList(store1, store2, store3);
 
-        given(storeRepository.findByStoreStatus(StoreStatus.OPERATING)).willReturn(storeList);
+        given(storeRepository.searchStores("%가게%", StoreStatus.OPERATING)).willReturn(storeList);
 
         // when : 가게 일괄 조회 호출
-        List<StoreResponse> storeResponses = storeService.getStores();
+        List<StoreResponse> storeResponses = storeService.getStores("%가게%");
 
         // then : 반환된 가게 리스트 검증
         assertNotNull(storeResponses);
@@ -164,91 +161,99 @@ public class StoreServiceTest {
 
     @Test
     public void 가게_단건_조회_성공() {
-//        // given : 가게 데이터와 여러개의 메뉴 데이터가 주어진다.
-//        Long storeId = 1L;
-//        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000), new User());
-//        ReflectionTestUtils.setField(store, "id", storeId);
-//
-//        PostMenuRequestDto postMenu1 = new PostMenuRequestDto();
-//        ReflectionTestUtils.setField(postMenu1, "name", "메뉴1");
-//        ReflectionTestUtils.setField(postMenu1, "price", 1000);
-//        ReflectionTestUtils.setField(postMenu1, "status", MenuStatus.ACTIVE);
-//
-//        PostMenuRequestDto postMenu2 = new PostMenuRequestDto();
-//        ReflectionTestUtils.setField(postMenu2, "name", "메뉴2");
-//        ReflectionTestUtils.setField(postMenu2, "price", 2000);
-//        ReflectionTestUtils.setField(postMenu2, "status", MenuStatus.ACTIVE);
-//
-//        PostMenuRequestDto postMenu3 = new PostMenuRequestDto();
-//        ReflectionTestUtils.setField(postMenu3, "name", "메뉴3");
-//        ReflectionTestUtils.setField(postMenu3, "price", 3000);
-//        ReflectionTestUtils.setField(postMenu3, "status", MenuStatus.INACTIVE);
-//
-//        Menu menu1 = new Menu(postMenu1, store);
-//        Menu menu2 = new Menu(postMenu2, store);
-//        Menu menu3 = new Menu(postMenu3, store);
-//        List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
-//
-//        given(storeRepository.findByIdAndStoreStatus(storeId, StoreStatus.OPERATING)).willReturn(Optional.of(store));
-//        given(menuRepository.findByStoreId(storeId)).willReturn(Optional.of(menuList));
-//
-//        // when : 가게 단건 조회 호출
-//        StoreDetailResponse response = storeService.getStore(storeId);
-//
-//        // then : 반환된 가게와 활성화된 메뉴 리스트 검증
-//        assertNotNull(response);
-//        assertEquals(storeId, response.getId());
-//        assertEquals("가게1", response.getName());
-//        assertEquals(1000, response.getMinOrderPrice());
-//        assertEquals(2, response.getMenuList().size());
-//        assertEquals("메뉴1", response.getMenuList().get(0).getName());
-//        assertEquals(1000, response.getMenuList().get(0).getPrice());
-//        assertEquals("메뉴2", response.getMenuList().get(1).getName());
-//        assertEquals(2000, response.getMenuList().get(1).getPrice());
+        // given : 가게 데이터와 여러개의 메뉴 데이터가 주어진다.
+        Long storeId = 1L;
+        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지"), new User());
+        ReflectionTestUtils.setField(store, "id", storeId);
+
+        PostMenuRequestDto postMenu1 = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(postMenu1, "name", "메뉴1");
+        ReflectionTestUtils.setField(postMenu1, "price", 1000);
+        ReflectionTestUtils.setField(postMenu1, "status", MenuStatus.ACTIVE);
+
+        PostMenuRequestDto postMenu2 = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(postMenu2, "name", "메뉴2");
+        ReflectionTestUtils.setField(postMenu2, "price", 2000);
+        ReflectionTestUtils.setField(postMenu2, "status", MenuStatus.ACTIVE);
+
+        PostMenuRequestDto postMenu3 = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(postMenu3, "name", "메뉴3");
+        ReflectionTestUtils.setField(postMenu3, "price", 3000);
+        ReflectionTestUtils.setField(postMenu3, "status", MenuStatus.INACTIVE);
+
+        String imageUrl1 = "http://test-url.com/test1.jpg";
+        String imageUrl2 = "http://test-url.com/test2.jpg";
+        String imageUrl3 = "http://test-url.com/test3.jpg";
+
+        Menu menu1 = new Menu(postMenu1, store, imageUrl1);
+        Menu menu2 = new Menu(postMenu2, store, imageUrl2);
+        Menu menu3 = new Menu(postMenu3, store, imageUrl3);
+        List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
+
+        given(storeRepository.findByIdAndStoreStatus(storeId, StoreStatus.OPERATING)).willReturn(Optional.of(store));
+        given(menuRepository.findByStoreId(storeId)).willReturn(Optional.of(menuList));
+
+        // when : 가게 단건 조회 호출
+        StoreDetailResponse response = storeService.getStore(storeId);
+
+        // then : 반환된 가게와 활성화된 메뉴 리스트 검증
+        assertNotNull(response);
+        assertEquals(storeId, response.getId());
+        assertEquals("가게1", response.getName());
+        assertEquals(1000, response.getMinOrderPrice());
+        assertEquals(2, response.getMenuList().size());
+        assertEquals("메뉴1", response.getMenuList().get(0).getName());
+        assertEquals(1000, response.getMenuList().get(0).getPrice());
+        assertEquals("메뉴2", response.getMenuList().get(1).getName());
+        assertEquals(2000, response.getMenuList().get(1).getPrice());
     }
 
     @Test
     public void 가게_폐업_성공() {
-//        // given : 유저,가게, 메뉴 데이터가 주어진다.
-//        Long userId = 1L;
-//        AuthUser authUser = new AuthUser(userId, "name", "test@gamil.com", UserRole.OWNER);
-//        User user = new User("test@gamil.com", "name", "password", UserRole.OWNER, UserStatus.ACTIVE);
-//        ReflectionTestUtils.setField(user, "id", userId);
-//
-//        Long storeId = 1L;
-//        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000), user);
-//        ReflectionTestUtils.setField(store, "id", storeId);
-//
-//        PostMenuRequestDto postMenu1 = new PostMenuRequestDto();
-//        ReflectionTestUtils.setField(postMenu1, "name", "메뉴1");
-//        ReflectionTestUtils.setField(postMenu1, "price", 1000);
-//        ReflectionTestUtils.setField(postMenu1, "status", MenuStatus.ACTIVE);
-//
-//        PostMenuRequestDto postMenu2 = new PostMenuRequestDto();
-//        ReflectionTestUtils.setField(postMenu2, "name", "메뉴2");
-//        ReflectionTestUtils.setField(postMenu2, "price", 2000);
-//        ReflectionTestUtils.setField(postMenu2, "status", MenuStatus.ACTIVE);
-//
-//        PostMenuRequestDto postMenu3 = new PostMenuRequestDto();
-//        ReflectionTestUtils.setField(postMenu3, "name", "메뉴3");
-//        ReflectionTestUtils.setField(postMenu3, "price", 3000);
-//        ReflectionTestUtils.setField(postMenu3, "status", MenuStatus.INACTIVE);
-//
-//        Menu menu1 = new Menu(postMenu1, store);
-//        Menu menu2 = new Menu(postMenu2, store);
-//        Menu menu3 = new Menu(postMenu3, store);
-//        List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
-//
-//        given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
-//        given(menuRepository.findByStoreId(storeId)).willReturn(Optional.of(menuList));
-//
-//        // when : 가게 폐업 호출
-//        storeService.deleteStore(storeId, authUser);
-//
-//        // then : 메뉴 비활성 및 가게 폐업 상태 확인
-//        assertEquals(MenuStatus.INACTIVE, menu1.getStatus());
-//        assertEquals(MenuStatus.INACTIVE, menu2.getStatus());
-//        assertEquals(MenuStatus.INACTIVE, menu3.getStatus());
-//        assertEquals(StoreStatus.TERMINATED, store.getStoreStatus());
+        // given : 유저,가게, 메뉴 데이터가 주어진다.
+        Long userId = 1L;
+        AuthUser authUser = new AuthUser(userId, "name", "test@gamil.com", UserRole.OWNER);
+        User user = new User("test@gamil.com", "name", "password", UserRole.OWNER, UserStatus.ACTIVE);
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Long storeId = 1L;
+        Store store = new Store(new StoreRequest("가게1", LocalTime.of(7, 0), LocalTime.of(21, 0), 1000, "공지"), user);
+        ReflectionTestUtils.setField(store, "id", storeId);
+
+        PostMenuRequestDto postMenu1 = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(postMenu1, "name", "메뉴1");
+        ReflectionTestUtils.setField(postMenu1, "price", 1000);
+        ReflectionTestUtils.setField(postMenu1, "status", MenuStatus.ACTIVE);
+
+        PostMenuRequestDto postMenu2 = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(postMenu2, "name", "메뉴2");
+        ReflectionTestUtils.setField(postMenu2, "price", 2000);
+        ReflectionTestUtils.setField(postMenu2, "status", MenuStatus.ACTIVE);
+
+        PostMenuRequestDto postMenu3 = new PostMenuRequestDto();
+        ReflectionTestUtils.setField(postMenu3, "name", "메뉴3");
+        ReflectionTestUtils.setField(postMenu3, "price", 3000);
+        ReflectionTestUtils.setField(postMenu3, "status", MenuStatus.INACTIVE);
+
+        String imageUrl1 = "http://test-url.com/test1.jpg";
+        String imageUrl2 = "http://test-url.com/test2.jpg";
+        String imageUrl3 = "http://test-url.com/test3.jpg";
+
+        Menu menu1 = new Menu(postMenu1, store, imageUrl1);
+        Menu menu2 = new Menu(postMenu2, store, imageUrl2);
+        Menu menu3 = new Menu(postMenu3, store, imageUrl3);
+        List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
+
+        given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
+        given(menuRepository.findByStoreId(storeId)).willReturn(Optional.of(menuList));
+
+        // when : 가게 폐업 호출
+        storeService.deleteStore(storeId, authUser);
+
+        // then : 메뉴 비활성 및 가게 폐업 상태 확인
+        assertEquals(MenuStatus.INACTIVE, menu1.getStatus());
+        assertEquals(MenuStatus.INACTIVE, menu2.getStatus());
+        assertEquals(MenuStatus.INACTIVE, menu3.getStatus());
+        assertEquals(StoreStatus.TERMINATED, store.getStoreStatus());
     }
 }
