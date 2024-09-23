@@ -67,7 +67,7 @@ public class StoreController {
      * @return 조회한 가게 상세 정보(가게 ID, 가게 이름, 가게 오픈시간, 가게 마감 시간, 가게 최소 가격)와 메뉴 정보
      *
      */
-    @GetMapping("/stores/{storeId}")
+    @GetMapping("/{storeId}")
     public ResponseEntity<ApiResponse<?>> getStore(@PathVariable("storeId") Long storeId) {
         return ResponseEntity.ok(ApiResponse.success(storeService.getStore(storeId)));
     }
@@ -78,7 +78,7 @@ public class StoreController {
      * @param storeId 폐업할 가게 ID
      *
      */
-    @DeleteMapping("/stores/{storeId}")
+    @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<?>> deleteStore(@PathVariable("storeId") Long storeId, @Auth AuthUser authUser) {
         storeService.deleteStore(storeId, authUser);
         return ResponseEntity.ok(ApiResponse.success("폐업 완료되었습니다."));
