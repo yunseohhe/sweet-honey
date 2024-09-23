@@ -1,8 +1,11 @@
 package com.sparta.sweethoney.domain.common.exception;
 
+import com.sparta.sweethoney.util.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static com.sparta.sweethoney.util.ApiResponse.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,7 +20,7 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity<ErrorResult>
      */
     @ExceptionHandler(GlobalException.class)
-    public ResponseEntity<ErrorResult> handlerGlobalException(GlobalException e) {
-        return new ResponseEntity<>(new ErrorResult(e.getMessage()), e.getHttpStatus());
+    public ResponseEntity<ApiResponse<?>> handlerGlobalException(GlobalException e) {
+        return new ResponseEntity<>(ApiResponse.error(e.getMessage()), e.getHttpStatus());
     }
 }

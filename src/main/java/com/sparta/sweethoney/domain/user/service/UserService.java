@@ -2,6 +2,10 @@ package com.sparta.sweethoney.domain.user.service;
 
 import com.sparta.sweethoney.config.PasswordEncoder;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
+import com.sparta.sweethoney.domain.common.exception.user.DuplicateEmailException;
+import com.sparta.sweethoney.domain.common.exception.user.NotFoundEmailException;
+import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserException;
+import com.sparta.sweethoney.domain.common.exception.user.UnauthorizedPasswordException;
 import com.sparta.sweethoney.domain.user.dto.request.DeleteUserRequestDto;
 import com.sparta.sweethoney.domain.user.dto.request.SigninRequestDto;
 import com.sparta.sweethoney.domain.user.dto.response.SigninResponseDto;
@@ -11,7 +15,6 @@ import com.sparta.sweethoney.domain.user.entity.User;
 import com.sparta.sweethoney.domain.user.entity.UserStatus;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import com.sparta.sweethoney.util.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +37,7 @@ public class UserService {
 
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+            throw new DuplicateEmailException();
         }
         // RequestDto -> Entity
         User user = User.saveUser(signupRequestDto, password);
@@ -50,12 +53,11 @@ public class UserService {
     @Transactional
     public SigninResponseDto signIn(SigninRequestDto signinRequestDto) {
         // 등록되지 않은 Email 확인
-        User user = userRepository.findByEmail(signinRequestDto.getEmail()).orElseThrow(() ->
-                new IllegalArgumentException("이메일을 확인해주세요."));
+        User user = userRepository.findByEmail(signinRequestDto.getEmail()).orElseThrow(NotFoundEmailException::new);
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(signinRequestDto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("패스워드를 확인해주세요.");
+            throw new UnauthorizedPasswordException();
         }
 
         //token생성
@@ -66,12 +68,11 @@ public class UserService {
 
     public String deleteUser(DeleteUserRequestDto deleteUserRequestDto, AuthUser authUser) {
         // 사용자 확인
-        User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new IllegalArgumentException("유효하지 않은 사용자입니다."));
+        User user = userRepository.findById(authUser.getId()).orElseThrow(NotFoundUserException::new);
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(deleteUserRequestDto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("패스워드를 확인해주세요.");
+            throw new UnauthorizedPasswordException();
         }
         // 유저 상태 DELETED 로 변경
         user.deleteUser(UserStatus.DELETED);
