@@ -3,7 +3,6 @@ package com.sparta.sweethoney.store.service;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
-import com.sparta.sweethoney.domain.menu.dto.response.GetMenuResponseDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
@@ -25,8 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-
-import java.sql.Ref;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +59,7 @@ public class StoreServiceTest {
         Store newStore = new Store(storeRequest, user);
 
         given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
-        given(storeRepository.countByUserId(user.getId())).willReturn(0);
+        given(storeRepository.countByUserIdAndStoreStatus(user.getId(), StoreStatus.OPERATING)).willReturn(0);
         given(storeRepository.save(any())).willReturn(newStore);
 
         // when : 주어진 유저가 가게 생성을 요청하면
