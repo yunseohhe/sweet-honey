@@ -37,7 +37,19 @@ public enum GlobalExceptionConst {
     INVALID_RATING(HttpStatus.BAD_REQUEST, "평점은 1점에서 5점 사이여야 합니다."),
 
     // Review_Exception (상태코드 403)
-    ORDER_NOT_COMPLETE(HttpStatus.FORBIDDEN, "배달 완료된 주문에만 리뷰를 작성할 수 있습니다.");
+    ORDER_NOT_COMPLETE(HttpStatus.FORBIDDEN, "배달 완료된 주문에만 리뷰를 작성할 수 있습니다."),
+
+    // user_Exception ( 상태코드 )
+    UNAUTHORIZED_PASSWORD(HttpStatus.UNAUTHORIZED, " 비밀번호를 확인해주세요."),
+
+    // user_Exception ( 상태코드 )
+    NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, " 이메일을 확인해주세요."),
+
+    // user_Exception ( 상태코드 )
+    NOT_FOUND_USERROLE(HttpStatus.NOT_FOUND, " UserRole 을 입력해주세요."),
+
+    // user_Exception ( 상태코드 )
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, " 중복된 이메일입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
