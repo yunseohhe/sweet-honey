@@ -1,15 +1,15 @@
 package com.sparta.sweethoney.domain.store.entity;
 
 
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
+import com.sparta.sweethoney.domain.store.enums.AdStatus;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
-import com.sparta.sweethoney.domain.common.entity.Timestamped;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Setter;
 
 import java.time.LocalTime;
 
@@ -35,7 +35,11 @@ public class Store extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
+    /*광고 상태 설정*/
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AdStatus adStatus = AdStatus.NONE;
 
     public Store(StoreRequest storeRequest, User user) {
         this.name = storeRequest.getName();

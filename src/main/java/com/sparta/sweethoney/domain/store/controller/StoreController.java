@@ -3,6 +3,7 @@ package com.sparta.sweethoney.domain.store.controller;
 import com.sparta.sweethoney.domain.common.annotation.Auth;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
+import com.sparta.sweethoney.domain.store.enums.AdStatus;
 import com.sparta.sweethoney.domain.store.service.StoreService;
 import com.sparta.sweethoney.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,25 @@ public class StoreController {
             @Auth AuthUser authUser
     ) {
         return ResponseEntity.ok(ApiResponse.success(storeService.updateStore(storeId, storeUpdateRequest, authUser)));
+    }
+
+    /**
+     * 가게 광고 상태 설정/해제
+     *
+     * @param storeId 광고 상태를 설정할 가게의 ID
+     * @param authUser 로그인한 유저
+     * @param adStatus 설정할 광고 상태 (AdStatus.NONE 또는 AdStatus.ADVERTISED)
+     * @return 광고 상태 변경 성공 메시지
+     *
+     */
+    @PostMapping("/{storeId}/set-ad-status")
+    public ResponseEntity<ApiResponse<?>> setAdStatus(
+            @PathVariable("storeId") Long storeId,
+            @Auth AuthUser authUser,
+            @RequestParam AdStatus adStatus
+    ) {
+        storeService.setAdStatus(storeId, authUser, adStatus);
+        return ResponseEntity.ok(ApiResponse.success("광고 상태가 변경되었습니다."));
     }
 
     /**

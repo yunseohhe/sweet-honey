@@ -14,6 +14,7 @@ import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.entity.Store;
+import com.sparta.sweethoney.domain.store.enums.AdStatus;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.store.repository.StoreRepository;
 import com.sparta.sweethoney.domain.user.entity.User;
@@ -74,10 +75,26 @@ public class StoreService {
         return mapToStoreResponse(store);
     }
 
+    // 광고 설정 로직
+    @Transactional
+    public void setAdStatus(Long storeId, AuthUser authUser, AdStatus adStatus) {
+        // 가게가 존재하는지 조회
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(NotFoundStoreException::new);
+
+        // 사장님인지 확인
+        if (!store.getUser().getId().equals(authUser.getId())) {
+            throw new NotOwnerOfStoreException();
+        }
+
+        // 광고 상태 설정
+        store.setAdStatus(adStatus);
+    }
+
     //가게 일괄 조회
     public List<StoreResponse> getStores() {
         // 운영 중인 가게만 조회
-        List<Store> storeList = storeRepository.findByStoreStatus(StoreStatus.OPERATING);
+        List<Store> storeList = storeRepository.findAllByStoreStatusOrderByAdStatusDesc(StoreStatus.OPERATING);
 
         return storeList.stream()
                 .map(this::mapToStoreResponse)
