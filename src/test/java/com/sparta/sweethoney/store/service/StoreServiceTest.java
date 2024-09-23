@@ -2,6 +2,7 @@ package com.sparta.sweethoney.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.common.exception.GlobalException;
+import com.sparta.sweethoney.domain.common.exception.store.NotOwnerOfStoreException;
 import com.sparta.sweethoney.domain.menu.dto.request.PostMenuRequestDto;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
@@ -121,12 +122,14 @@ public class StoreServiceTest {
         given(storeRepository.findById(anyLong())).willReturn(Optional.of(originalStore));
 
         // when & then: 소유주가 아닐 때 예외 발생 확인
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        NotOwnerOfStoreException exception = assertThrows(NotOwnerOfStoreException.class, () -> {
             storeService.updateStore(storeId, new StoreRequest("수정된가게이름", LocalTime.of(8, 0), LocalTime.of(22, 0), 1500), authUser);
         });
 
-        // 예외 메시지 검증
-        assertEquals("NOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다.", exception.getMessage());
+        // 상태 코드와 예외 메시지를 분리하여 검증
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains("NOT_OWNER_OF_STORE 해당 가게의 소유자가 아닙니다."));
+        assertTrue(actualMessage.contains("403 FORBIDDEN"));
     }
 
     @Test
@@ -143,7 +146,7 @@ public class StoreServiceTest {
 
         List<Store> storeList = Arrays.asList(store1, store2, store3);
 
-        given(storeRepository.findAll()).willReturn(storeList);
+        given(storeRepository.findByStoreStatus(StoreStatus.OPERATING)).willReturn(storeList);
 
         // when : 가게 일괄 조회 호출
         List<StoreResponse> storeResponses = storeService.getStores();
@@ -186,7 +189,7 @@ public class StoreServiceTest {
         Menu menu3 = new Menu(postMenu3, store);
         List<Menu> menuList = Arrays.asList(menu1, menu2, menu3);
 
-        given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
+        given(storeRepository.findByIdAndStoreStatus(storeId, StoreStatus.OPERATING)).willReturn(Optional.of(store));
         given(menuRepository.findByStoreId(storeId)).willReturn(Optional.of(menuList));
 
         // when : 가게 단건 조회 호출
