@@ -50,6 +50,8 @@ public class KakaoUserService {
         // 4. JWT 토큰 반환
         String createToken =  jwtUtil.createToken(kakaoUser.getId());
 
+        log.info(createToken);
+
         return createToken;
 //        return accessToken;
     }
@@ -150,7 +152,7 @@ public class KakaoUserService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(email, kakaoUserInfo.getNickname(), encodedPassword, UserRole.PENDING, UserStatus.ACTIVE, kakaoId);
+                kakaoUser = new User(email, kakaoUserInfo.getNickname(), encodedPassword, UserRole.GUEST, UserStatus.ACTIVE, kakaoId);
             }
 
             userRepository.save(kakaoUser);
