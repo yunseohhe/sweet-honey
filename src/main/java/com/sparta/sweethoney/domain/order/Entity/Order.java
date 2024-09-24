@@ -45,6 +45,9 @@ public class Order {
 
     @NotBlank
     private String deliveryAddress;
+
+    private Integer count;
+
     @NotNull
     private Integer amount;
 
@@ -53,13 +56,14 @@ public class Order {
     private OrderStatus status;
 
     public Order(User user, Store store, Menu menu,
-                 LocalDateTime orderTime, String deliveryAddress, OrderStatus status) {
+                 LocalDateTime orderTime, String deliveryAddress, Integer count, OrderStatus status) {
         this.user = user;
         this.store = store;
         this.menu = menu;
         this.orderTime = orderTime;
         this.deliveryAddress = deliveryAddress;
-        this.amount = menu.getPrice();
+        this.count = count;
+        this.amount = menu.getPrice() * count;
         this.status = status;
     }
 
