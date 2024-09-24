@@ -6,6 +6,7 @@ import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,30 +26,30 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @NotBlank
+    @NotNull
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
-    @NotBlank
+    @NotNull
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
-    @NotBlank
+    @NotNull
     private Menu menu;
 
-    @NotBlank
+    @NotNull
     private LocalDateTime orderTime;
     private LocalDateTime orderCompleteTime;
 
     @NotBlank
     private String deliveryAddress;
-    @NotBlank
+    @NotNull
     private Integer amount;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank
+    @NotNull
     private OrderStatus status;
 
     public Order(User user, Store store, Menu menu,
