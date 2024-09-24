@@ -50,6 +50,8 @@ public class KakaoUserService {
         // 4. JWT 토큰 반환
         String createToken =  jwtUtil.createToken(kakaoUser.getId());
 
+        log.info(createToken);
+
         return createToken;
 //        return accessToken;
     }
