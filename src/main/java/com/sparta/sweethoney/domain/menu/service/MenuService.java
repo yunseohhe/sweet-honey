@@ -1,7 +1,9 @@
 package com.sparta.sweethoney.domain.menu.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
@@ -194,7 +196,7 @@ public class MenuService {
     private String changeFileName(String originalFileName) {
         // 이미지 등록 날짜를 붙여서 리턴
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        return originalFileName + "_" + LocalDateTime.now().format(formatter);
+        return LocalDateTime.now().format(formatter) + "_" + originalFileName;
     }
 
     /* 등록된 메뉴 기존 URL 원본 파일이름으로 디코딩 */
