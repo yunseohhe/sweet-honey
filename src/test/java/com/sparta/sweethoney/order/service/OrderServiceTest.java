@@ -104,6 +104,7 @@ class OrderServiceTest {
                 menu,
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
                 "주소",
+                2,
                 PENDING);
         ReflectionTestUtils.setField(order, "id", orderId);
     }
@@ -117,7 +118,7 @@ class OrderServiceTest {
         Long storeId = 1L;
         Long menuId = 1L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
@@ -137,6 +138,7 @@ class OrderServiceTest {
         assertThat(findOrder.getStoreName()).isEqualTo(createOrder.getStoreName());
         assertThat(findOrder.getUserEmail()).isEqualTo(createOrder.getUserEmail());
         assertThat(findOrder.getDeliveryAddress()).isEqualTo(createOrder.getDeliveryAddress());
+        assertThat(findOrder.getCount()).isEqualTo(createOrder.getCount());
         assertThat(findOrder.getOrderStatus().name()).isEqualTo("PENDING");
         assertThat(findOrder.getOrderTime()).isEqualTo(createOrder.getOrderTime());
         assertThat(findOrder.getOrderCompleteTime()).isNull();
@@ -157,7 +159,7 @@ class OrderServiceTest {
         assertThat(findOrders.size()).isEqualTo(1);
         assertThat(findOrders.get(0).getOrderId()).isEqualTo(1L);
         assertThat(findOrders.get(0).getUserEmail()).isEqualTo("thisisemail@gmail.com");
-        assertThat(findOrders.get(0).getOrderAmount()).isEqualTo(15000);
+        assertThat(findOrders.get(0).getOrderAmount()).isEqualTo(30000);
         assertThat(findOrders.get(0).getOrderStatus()).isEqualTo(PENDING);
         assertThat(findOrders.get(0).getDeliveryAddress()).isEqualTo("주소");
         assertThat(findOrders.get(0).getStoreName()).isEqualTo("제육킹밥집");
@@ -188,7 +190,7 @@ class OrderServiceTest {
         Long storeId = 1L;
         Long menuId = 1L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2,"주소입니당!!!");
 
         //when & then
         when(userRepository.findById(userId)).thenThrow(new NotFoundUserException());
@@ -205,7 +207,7 @@ class OrderServiceTest {
         Long storeId = 2L;
         Long menuId = 1L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2,"주소입니당!!!");
 
         //when & then
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -223,7 +225,7 @@ class OrderServiceTest {
         Long storeId = 1L;
         Long menuId = 2L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2,"주소입니당!!!");
 
         //when & then
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -287,11 +289,11 @@ class OrderServiceTest {
         Long userId = 1L;
         Long storeId = 1L;
         Long menuId = 1L;
-        int menuPrice = 9000;
+        int menuPrice = 2000;
 
         ReflectionTestUtils.setField(menu, "price", menuPrice);
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소입니당!!!");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(storeRepository.findById(storeId)).willReturn(Optional.of(store));

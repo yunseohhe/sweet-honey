@@ -11,5 +11,6 @@ public class OrderRequestDto {
     private Long userId;
     private Long storeId;
     private Long menuId;
+    private Integer count;
     private String address;
 }
