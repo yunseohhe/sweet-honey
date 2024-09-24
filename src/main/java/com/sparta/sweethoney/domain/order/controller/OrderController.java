@@ -2,6 +2,7 @@ package com.sparta.sweethoney.domain.order.controller;
 
 import com.sparta.sweethoney.domain.common.annotation.Auth;
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
+import com.sparta.sweethoney.domain.order.cart.dto.request.CartRequestDto;
 import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
 import com.sparta.sweethoney.domain.order.dto.request.OrderUpdateStatusRequest;
 import com.sparta.sweethoney.domain.order.dto.response.OrderCreateDto;
@@ -29,6 +30,7 @@ public class OrderController {
      * 1. requestDto 필드 -> 메뉴, 가게 ID
      * 2. servletRequest 내부 저장된 회원 ID를 꺼낸다.
      * 3. UserId를 requestDto에 담고, 넘겨주면서 `OrderService`호출
+     *
      * @param requestDto 가게 ID, 메뉴 ID, 수량, 배달 주소
      * @param authUser   유저 ID
      * @return 주문 ID, 수량, 주문 금액, 가게 이름, 회원 이메일, 메뉴 이름, 배달 주소, 주문 상태, 주문 시간
@@ -49,7 +51,7 @@ public class OrderController {
     /**
      * 주문 전체 조회
      *
-     * @param request
+     * @param authUser
      * @return ResponseEntity<List < OrderFindDto>>
      */
     @GetMapping
@@ -79,7 +81,6 @@ public class OrderController {
      *
      * @param orderId
      * @param orderUpdateStatusRequest
-     * @param servletRequest
      * @return ResponseEntity<OrderUpdateDto>
      */
     @PatchMapping("/{orderId}")

@@ -11,6 +11,8 @@ import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserException;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.order.Entity.Order;
+import com.sparta.sweethoney.domain.order.cart.dto.request.CartRequestDto;
+import com.sparta.sweethoney.domain.order.cart.service.CartService;
 import com.sparta.sweethoney.domain.order.dto.request.OrderRequestDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderCreateDto;
 import com.sparta.sweethoney.domain.order.dto.response.OrderFindDto;
@@ -44,6 +46,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
+    private final CartService cartService;
 
     /* 주문 생성 */
     public OrderCreateDto createOrder(Long userId, OrderRequestDto requestDto) {
