@@ -52,8 +52,8 @@ public class MenuController {
             @Auth AuthUser authUser,
             @PathVariable(name = "storeId") Long storeId,
             @PathVariable(name = "menuId") Long menuId,
-            @RequestBody PutMenuRequestDto requestDto,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @RequestPart(name = "requestDto") PutMenuRequestDto requestDto,
+            @RequestPart(name = "image", required = false) MultipartFile image
     ) throws IOException {
         return ResponseEntity.ok(ApiResponse.success(service.updateMenu(authUser, storeId, menuId, requestDto, image)));
     }
