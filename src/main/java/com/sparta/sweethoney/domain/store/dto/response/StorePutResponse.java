@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 @Getter
 @AllArgsConstructor
-public class StoreResponse {
+public class StorePutResponse {
     private final Long id;
     private final String name;
 
@@ -19,4 +19,5 @@ public class StoreResponse {
     private final LocalTime closeTime;
 
     private final int minOrderPrice;
+    private final String notice;
 }

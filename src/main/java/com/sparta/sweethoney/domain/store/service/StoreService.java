@@ -1,7 +1,6 @@
 package com.sparta.sweethoney.domain.store.service;
 
 import com.sparta.sweethoney.domain.common.dto.AuthUser;
-import com.sparta.sweethoney.domain.common.exception.GlobalException;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.store.MaxStoreLimitException;
 import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
@@ -12,8 +11,11 @@ import com.sparta.sweethoney.domain.menu.entity.MenuStatus;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
 import com.sparta.sweethoney.domain.store.dto.response.StoreDetailResponse;
+import com.sparta.sweethoney.domain.store.dto.response.StorePutResponse;
 import com.sparta.sweethoney.domain.store.dto.response.StoreResponse;
 import com.sparta.sweethoney.domain.store.entity.Store;
+import com.sparta.sweethoney.domain.store.enums.AdStatus;
+import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.store.repository.StoreRepository;
 import com.sparta.sweethoney.domain.user.entity.User;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
@@ -23,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.sparta.sweethoney.domain.common.exception.GlobalExceptionConst.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +41,8 @@ public class StoreService {
         User owner = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사장님을 찾을 수 없습니다."));
 
-        // 사장님이 운영 중인 가게 수는 최대 3개까지 생성 가능
-        if (storeRepository.countByUserId(owner.getId()) == 3) {
+        // 사장님이 운영 중인 가게 수는 최대 3개까지 생성 가능 (폐업 상태 가게는 제외)
+        if (storeRepository.countByUserIdAndStoreStatus(owner.getId(), StoreStatus.OPERATING) == 3) {
             throw new MaxStoreLimitException();
         }
 
@@ -55,7 +55,7 @@ public class StoreService {
 
     // 가게 수정 로직
     @Transactional
-    public StoreResponse updateStore(Long storeId, StoreRequest storeUpdateRequest, AuthUser authUser) {
+    public StorePutResponse updateStore(Long storeId, StoreRequest storeUpdateRequest, AuthUser authUser) {
 
         // 가게가 존재하는지 조회
         Store store = storeRepository.findById(storeId)
@@ -69,13 +69,48 @@ public class StoreService {
         // 가게 수정
         store.update(storeUpdateRequest);
 
-        // Dto 반환
-        return mapToStoreResponse(store);
+        // 수정된 가게 정보를 StorePutResponse(DTO)로 반환
+        return new StorePutResponse(
+                store.getId(),
+                store.getName(),
+                store.getOpenTime(),
+                store.getCloseTime(),
+                store.getMinOrderPrice(),
+                store.getNotice()
+        );
+    }
+
+    // 광고 설정 로직
+    @Transactional
+    public void setAdStatus(Long storeId, AuthUser authUser, AdStatus adStatus) {
+        // 가게가 존재하는지 조회
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(NotFoundStoreException::new);
+
+        // 사장님인지 확인
+        if (!store.getUser().getId().equals(authUser.getId())) {
+            throw new NotOwnerOfStoreException();
+        }
+
+        // 광고 상태 설정
+        store.setAdStatus(adStatus);
     }
 
     //가게 일괄 조회
-    public List<StoreResponse> getStores() {
-        List<Store> storeList = storeRepository.findAll();
+    public List<StoreResponse> getStores(String name) {
+        // 가게명을 포함하는 가게들만 검색 (name이 null 또는 빈 문자열이 아닐 경우)
+        List<Store> storeList;
+        if (name != null && !name.isBlank()) {
+            storeList = storeRepository.searchStores(name, StoreStatus.OPERATING);
+        } else {
+            // name이 없을 때 모든 가게를 검색하는 걸 막기 위해 빈 리스트 반환 또는 예외 처리
+            throw new NotFoundStoreException();
+        }
+
+        // 포함된 가게명이 존재하는지 확인
+        if (storeList.isEmpty()) {
+            throw new NotFoundStoreException();
+        }
 
         return storeList.stream()
                 .map(this::mapToStoreResponse)
@@ -84,8 +119,8 @@ public class StoreService {
 
     //가게 단건 조회
     public StoreDetailResponse getStore(Long storeId) {
-        // 가게가 존재하는지 조회
-        Store store = storeRepository.findById(storeId)
+        // 운영 중인 가게만 조회
+        Store store = storeRepository.findByIdAndStoreStatus(storeId, StoreStatus.OPERATING)
                 .orElseThrow(NotFoundStoreException::new);
 
         // 가게기준으로 활성화 상태인 메뉴만을 가져오는 로직
@@ -104,6 +139,7 @@ public class StoreService {
                 store.getOpenTime(),
                 store.getCloseTime(),
                 store.getMinOrderPrice(),
+                store.getNotice(),
                 activeMenus
         );
     }
@@ -129,10 +165,10 @@ public class StoreService {
             if (menu.getStatus() == MenuStatus.ACTIVE) {
                 menu.delete(MenuStatus.INACTIVE);
             }
-
-            // 가게 폐업
-            store.terminated();
         }
+
+        // 가게 폐업
+        store.terminated();
     }
 
     // StoreResponse 객체 생성 메서드

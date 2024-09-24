@@ -1,6 +1,8 @@
 package com.sparta.sweethoney.domain.user.kakaoUser.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.sweethoney.domain.user.entity.UserRole;
+import com.sparta.sweethoney.domain.user.kakaoUser.dto.KakaoLoginRequestDto;
 import com.sparta.sweethoney.domain.user.kakaoUser.service.KakaoUserService;
 import com.sparta.sweethoney.util.ApiResponse;
 import com.sparta.sweethoney.util.JwtUtil;
@@ -19,9 +21,9 @@ public class KakaoUserController {
 
 
     @PostMapping("/loginKakao")
-    public ResponseEntity<ApiResponse<?>> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<?>> kakaoLogin(@RequestParam String code, @RequestBody KakaoLoginRequestDto kakaoLoginRequestDto, HttpServletResponse response) throws JsonProcessingException {
         // code: 카카오 서버로부터 받은 인가 코드
-        String createToken = kakaoUserService.kakaoLogin(code, response);
+        String createToken = kakaoUserService.kakaoLogin(code, kakaoLoginRequestDto, response);
 
         // Cookie 생성 및 직접 브라우저에 Set
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, createToken.substring(7));

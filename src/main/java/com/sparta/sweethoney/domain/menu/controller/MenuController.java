@@ -12,6 +12,9 @@ import com.sparta.sweethoney.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/stores")
@@ -30,9 +33,10 @@ public class MenuController {
     public ResponseEntity<ApiResponse<PostMenuResponseDto>> addMenu(
             @Auth AuthUser authUser,
             @PathVariable("storeId") Long storeId,
-            @RequestBody PostMenuRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(ApiResponse.success(service.addMenu(authUser, storeId, requestDto)));
+            @RequestBody PostMenuRequestDto requestDto,
+            @RequestPart(value = "image", required = false)MultipartFile image
+            ) throws IOException {
+        return ResponseEntity.ok(ApiResponse.success(service.addMenu(authUser, storeId, requestDto, image)));
     }
 
 
@@ -48,9 +52,10 @@ public class MenuController {
             @Auth AuthUser authUser,
             @PathVariable Long storeId,
             @PathVariable Long menuId,
-            @RequestBody PutMenuRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(ApiResponse.success(service.updateMenu(authUser, storeId, menuId, requestDto)));
+            @RequestBody PutMenuRequestDto requestDto,
+            @RequestPart(value = "image", required = false)MultipartFile image
+    ) throws IOException {
+        return ResponseEntity.ok(ApiResponse.success(service.updateMenu(authUser, storeId, menuId, requestDto, image)));
     }
 
     /**

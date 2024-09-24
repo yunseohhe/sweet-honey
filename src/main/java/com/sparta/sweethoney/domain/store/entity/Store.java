@@ -1,15 +1,15 @@
 package com.sparta.sweethoney.domain.store.entity;
 
 
+import com.sparta.sweethoney.domain.common.entity.Timestamped;
 import com.sparta.sweethoney.domain.store.dto.request.StoreRequest;
+import com.sparta.sweethoney.domain.store.enums.AdStatus;
 import com.sparta.sweethoney.domain.store.enums.StoreStatus;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
-import com.sparta.sweethoney.domain.common.entity.Timestamped;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Setter;
 
 import java.time.LocalTime;
 
@@ -35,7 +35,15 @@ public class Store extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /*광고 상태 설정*/
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AdStatus adStatus = AdStatus.NONE;
 
+    /*공지 필드*/
+    @Column(columnDefinition = "TEXT")
+    private String notice = "";
 
     public Store(StoreRequest storeRequest, User user) {
         this.name = storeRequest.getName();
@@ -43,6 +51,7 @@ public class Store extends Timestamped {
         this.closeTime = storeRequest.getCloseTime();
         this.minOrderPrice = storeRequest.getMinOrderPrice();
         this.user = user;
+        this.notice = storeRequest.getNotice();
     }
 
     /* 가게 최소 가격 */
@@ -60,6 +69,8 @@ public class Store extends Timestamped {
         this.openTime = storeRequest.getOpenTime();
         this.closeTime = storeRequest.getCloseTime();
         this.minOrderPrice = storeRequest.getMinOrderPrice();
+        // 공지가 없으면 빈 문자열로 처리
+        this.notice = storeRequest.getNotice() != null ? storeRequest.getNotice() : "";
     }
 
     /* 가게 폐업 */

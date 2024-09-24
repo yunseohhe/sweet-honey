@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class Menu extends Timestamped {
     private String name;
     private int price;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private MenuStatus status;
@@ -25,17 +26,19 @@ public class Menu extends Timestamped {
     private Store store;
 
     /* 메뉴 생성 */
-    public Menu(PostMenuRequestDto requestDto, Store store) {
+    public Menu(PostMenuRequestDto requestDto, Store store, String imageUrl) {
         this.name = requestDto.getName();
         this.price = requestDto.getPrice();
         this.status = requestDto.getStatus();
         this.store = store;
+        this.imageUrl = imageUrl;
     }
 
     /* 메뉴 수정 */
-    public void update(PutMenuRequestDto requestDto) {
+    public void update(PutMenuRequestDto requestDto, String imageUrl) {
         this.name = requestDto.getName();
         this.price = requestDto.getPrice();
+        this.imageUrl = imageUrl;
     }
 
     /* 메뉴 삭제 */

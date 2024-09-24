@@ -30,8 +30,8 @@ public class UserController {
 
     @PostMapping("/users/login")
     public ResponseEntity<ApiResponse<?>> signIn(@RequestBody SigninRequestDto signinRequestDto) {
-        return ResponseEntity.ok(ApiResponse.success(userService.signIn(signinRequestDto)));
-    }
+            return ResponseEntity.ok(ApiResponse.success(userService.signIn(signinRequestDto)));
+        }
 
     @DeleteMapping("/users")
     public ResponseEntity<ApiResponse<?>> deleteUser(@RequestBody DeleteUserRequestDto deleteUserRequestDto, @Auth AuthUser authUser) {
