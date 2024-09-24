@@ -11,17 +11,28 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class KakaoUserController {
     private final KakaoUserService kakaoUserService;
 
 
+    @GetMapping("/sweethoney/home")
+    public String loginPage() {
+        return "home";
+    }
+
+    @GetMapping("/sweethoney/regist")
+    public String registPage() {
+        return "main";
+    }
+
 
     @GetMapping("/login-kakao")
-    public ResponseEntity<ApiResponse<?>> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
+    public String kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
         // code: 카카오 서버로부터 받은 인가 코드
         String createToken = kakaoUserService.kakaoLogin(code, response);
 
@@ -29,9 +40,11 @@ public class KakaoUserController {
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, createToken.substring(7));
         cookie.setPath("https://kapi.kakao.com/v2/user/me");
         response.addCookie(cookie);
-        return ResponseEntity.ok(ApiResponse.success(createToken));
+//        return ResponseEntity.ok(ApiResponse.success(createToken));
+        return "register";
     }
 
+    @ResponseBody
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<?>> register(@RequestBody KakaoRegisterRequestDto kakaoRegisterRequestDto, @Auth AuthUser authUser) {
         return ResponseEntity.ok(ApiResponse.success(kakaoUserService.register(kakaoRegisterRequestDto, authUser.getId())));

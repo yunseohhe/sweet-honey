@@ -30,7 +30,7 @@ public class AuthFilter implements Filter {
 
         if (("POST".equalsIgnoreCase(httpServletRequest.getMethod()) &&
                 StringUtils.hasText(url) &&
-                (url.startsWith("/users") || url.startsWith("/users/login"))) || url.startsWith("/login-kakao") ) {
+                (url.startsWith("/users") || url.startsWith("/users/login"))) || url.startsWith("/login-kakao") || url.startsWith("/sweethoney") ) {
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {
             // 나머지 API 요청은 인증 처리 진행
