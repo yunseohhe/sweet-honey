@@ -8,7 +8,7 @@
 ### Environment
 [![My Skills](https://skillicons.dev/icons?i=idea,github,git)](https://skillicons.dev)
 ### Development
-[![My Skills](https://skillicons.dev/icons?i=java,spring,mysql)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=java,spring,mysql,aws,docker)](https://skillicons.dev)
 ### Communication
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white) [![My Skills](https://skillicons.dev/icons?i=notion)](https://skillicons.dev)
 
@@ -19,4 +19,4 @@
 https://www.notion.so/teamsparta/API-8aabd37abd834fc39d40040e1ba6ebc1
 
 ## ♻️ERD
-![달달허니 (2).png](img%2F%EB%8B%AC%EB%8B%AC%ED%97%88%EB%8B%88%20%282%29.png)
+![달달허니.jpg](img%2F%EB%8B%AC%EB%8B%AC%ED%97%88%EB%8B%88.jpg)
