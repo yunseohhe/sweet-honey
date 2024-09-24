@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -25,23 +26,13 @@ public class KakaoUserController {
         return "home";
     }
 
-    @GetMapping("/sweethoney/regist")
-    public String registPage() {
-        return "main";
-    }
-
 
     @GetMapping("/login-kakao")
-    public String kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
+    public String kakaoLogin(@RequestParam("code") String code, HttpServletResponse response, Model model) throws JsonProcessingException {
         // code: 카카오 서버로부터 받은 인가 코드
         String createToken = kakaoUserService.kakaoLogin(code, response);
 
-        // Cookie 생성 및 직접 브라우저에 Set
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, createToken.substring(7));
-        cookie.setPath("https://kapi.kakao.com/v2/user/me");
-        response.addCookie(cookie);
-//        return ResponseEntity.ok(ApiResponse.success(createToken));
-        return "register";
+        return "main";
     }
 
     @ResponseBody

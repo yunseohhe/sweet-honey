@@ -5,6 +5,7 @@ import com.sparta.sweethoney.domain.order.enums.OrderStatus;
 import com.sparta.sweethoney.domain.store.entity.Store;
 import com.sparta.sweethoney.domain.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import static com.sparta.sweethoney.domain.order.enums.OrderStatus.CANCEL;
 import static com.sparta.sweethoney.domain.order.enums.OrderStatus.COMPLETE;
 
 @Entity
@@ -46,6 +48,8 @@ public class Order {
     @NotBlank
     private String deliveryAddress;
 
+    @NotNull
+    @Min(1)
     private Integer count;
 
     @NotNull
@@ -73,7 +77,7 @@ public class Order {
      * @param status
      */
     public void updateStatus(OrderStatus status) {
-        if (status.equals(COMPLETE)) {
+        if (status.equals(COMPLETE) || status.equals(CANCEL)) {
             this.orderCompleteTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         }
 
