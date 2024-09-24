@@ -7,7 +7,7 @@ import ch.qos.logback.core.read.ListAppender;
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
 import com.sparta.sweethoney.domain.common.exception.order.MinimumOrderAmountException;
 import com.sparta.sweethoney.domain.common.exception.order.NotFoundOrderException;
-import com.sparta.sweethoney.domain.common.exception.order.NotFoundUserException;
+import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserException;
 import com.sparta.sweethoney.domain.common.exception.order.UnauthorizedAccessException;
 import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
 import com.sparta.sweethoney.domain.menu.entity.Menu;

@@ -4,11 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.sweethoney.config.PasswordEncoder;
-import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserRoleException;
+import com.sparta.sweethoney.domain.common.dto.AuthUser;
+import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserException;
 import com.sparta.sweethoney.domain.user.entity.User;
 import com.sparta.sweethoney.domain.user.entity.UserRole;
 import com.sparta.sweethoney.domain.user.entity.UserStatus;
-import com.sparta.sweethoney.domain.user.kakaoUser.dto.KakaoLoginRequestDto;
+import com.sparta.sweethoney.domain.user.kakaoUser.dto.KakaoRegisterRequestDto;
 import com.sparta.sweethoney.domain.user.kakaoUser.dto.KakaoUserInfoDto;
 import com.sparta.sweethoney.domain.user.repository.UserRepository;
 import com.sparta.sweethoney.util.JwtUtil;
@@ -35,10 +36,7 @@ public class KakaoUserService {
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
 
-    public String kakaoLogin(String code, KakaoLoginRequestDto kakaoLoginRequestDto, HttpServletResponse response) throws JsonProcessingException {
-       if (kakaoLoginRequestDto.getUserRole() == null) {
-           throw new NotFoundUserRoleException();
-       }
+    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
@@ -47,7 +45,7 @@ public class KakaoUserService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         // 3. 필요시에 회원가입
-        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo, kakaoLoginRequestDto);
+        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. JWT 토큰 반환
         String createToken =  jwtUtil.createToken(kakaoUser.getId());
@@ -73,7 +71,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "aeeffb48d21d2171981162a755a54141");
-        body.add("redirect_uri", "http://localhost:8080/loginKakao");
+        body.add("redirect_uri", "http://localhost:8080/login-kakao");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -129,7 +127,7 @@ public class KakaoUserService {
         return new KakaoUserInfoDto(id, nickname, email);
     }
 
-    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo, KakaoLoginRequestDto kakaoLoginRequestDto) {
+    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
@@ -152,11 +150,21 @@ public class KakaoUserService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(email, kakaoUserInfo.getNickname(), encodedPassword, kakaoLoginRequestDto.getUserRole(), UserStatus.ACTIVE, kakaoId);
+                kakaoUser = new User(email, kakaoUserInfo.getNickname(), encodedPassword, UserRole.PENDING, UserStatus.ACTIVE, kakaoId);
             }
 
             userRepository.save(kakaoUser);
         }
         return kakaoUser;
+    }
+
+    public String register(KakaoRegisterRequestDto kakaoRegisterRequestDto, Long userId) {
+        // 사용자 확인
+        User user = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+
+        // USERROLE 업데이트
+        user.update(kakaoRegisterRequestDto.getUserRole());
+
+        return (kakaoRegisterRequestDto.getUserRole().getMessage() + "로 선택되었습니다.");
     }
 }

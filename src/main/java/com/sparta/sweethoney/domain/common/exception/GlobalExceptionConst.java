@@ -51,6 +51,7 @@ public enum GlobalExceptionConst {
     // user_Exception ( 상태코드 )
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, " 중복된 이메일입니다.");
 
+
     private final HttpStatus httpStatus;
     private final String message;
 }
