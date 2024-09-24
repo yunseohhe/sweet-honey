@@ -67,21 +67,8 @@ public class MenuService {
         // 가게 조회
         Store store = findStoreOrElseThrow(storeId);
 
-        // 이미지 이름 변경
-        String originalFileName = image.getOriginalFilename();
-        String fileName = changeFileName(originalFileName);
-
-        // S3에 파일을 보낼 때 파일의 종류와 크기를 알려주기
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(image.getContentType());
-        metadata.setContentLength(image.getSize());
-        metadata.setContentDisposition("inline");
-
-        // S3에 파일 업로드
-        s3Client.putObject(bucket, fileName, image.getInputStream(), metadata);
-
         // 업로드한 파일의 S3 URL 주소
-        String imageUrl = s3Client.getUrl(bucket, fileName).toString();
+        String imageUrl = uploadImageToS3(image, bucket);
 
         // Entity 변환
         Menu menu = new Menu(requestDto, store, imageUrl);
@@ -104,24 +91,11 @@ public class MenuService {
         // 가게 조회
         Store store = findStoreOrElseThrow(storeId);
 
-        // 이미지 이름 변경
-        String originalFileName = image.getOriginalFilename();
-        String fileName = changeFileName(originalFileName);
-
         // 메뉴 조회
         Menu menu = findMenuOrElseThrow(menuId, store.getId());
 
-        // S3에 파일을 보낼 때 파일의 종류와 크기를 알려주기
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(image.getContentType());
-        metadata.setContentLength(image.getSize());
-        metadata.setContentDisposition("inline");
-
-        // S3에 파일 업로드
-        s3Client.putObject(bucket, fileName, image.getInputStream(), metadata);
-
         // 업로드한 파일의 S3 URL 주소
-        String imageUrl = s3Client.getUrl(bucket, fileName).toString();
+        String imageUrl = uploadImageToS3(image, bucket);
 
         // 메뉴 수정
         menu.update(requestDto, imageUrl);
@@ -199,6 +173,24 @@ public class MenuService {
         // 이미지 등록 날짜를 붙여서 리턴
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDateTime.now().format(formatter) + "_" + originalFileName;
+    }
+
+    /* 이미지를 등록하고 URL 추출 */
+    private String uploadImageToS3(MultipartFile image, String bucket) throws IOException {
+        // 이미지 이름 변경
+        String originalFileName = image.getOriginalFilename();
+        String fileName = changeFileName(originalFileName);
+
+        // S3에 파일을 보낼 때 파일의 종류와 크기를 알려주기
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(image.getContentType());
+        metadata.setContentLength(image.getSize());
+        metadata.setContentDisposition("inline");
+
+        // S3에 파일 업로드
+        s3Client.putObject(bucket, fileName, image.getInputStream(), metadata);
+
+        return s3Client.getUrl(bucket, fileName).toString();
     }
 
     /* 등록된 메뉴 기존 URL 원본 파일이름으로 디코딩 */
