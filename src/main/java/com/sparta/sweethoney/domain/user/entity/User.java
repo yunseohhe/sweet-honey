@@ -58,4 +58,8 @@ public class User extends Timestamped {
         this.kakaoId = kakaoId;
         return this;
     }
+
+    public void update(UserRole userRole) {
+        this.userRole = userRole;
+    }
 }

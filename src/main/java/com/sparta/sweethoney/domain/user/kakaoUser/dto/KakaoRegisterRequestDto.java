@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class KakaoLoginRequestDto {
+public class KakaoRegisterRequestDto {
     private UserRole userRole;
 
 }
