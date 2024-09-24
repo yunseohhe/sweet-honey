@@ -32,9 +32,9 @@ public class MenuController {
     @PostMapping("{storeId}/menus")
     public ResponseEntity<ApiResponse<PostMenuResponseDto>> addMenu(
             @Auth AuthUser authUser,
-            @PathVariable("storeId") Long storeId,
-            @RequestBody PostMenuRequestDto requestDto,
-            @RequestPart(value = "image", required = false)MultipartFile image
+            @PathVariable(name = "storeId") Long storeId,
+            @RequestPart(name = "requestDto") PostMenuRequestDto requestDto,
+            @RequestPart(name = "image", required = false) MultipartFile image
             ) throws IOException {
         return ResponseEntity.ok(ApiResponse.success(service.addMenu(authUser, storeId, requestDto, image)));
     }
@@ -50,10 +50,10 @@ public class MenuController {
     @PutMapping("/{storeId}/menus/{menuId}")
     public ResponseEntity<ApiResponse<PutMenuResponseDto>> updateMenu(
             @Auth AuthUser authUser,
-            @PathVariable Long storeId,
-            @PathVariable Long menuId,
+            @PathVariable(name = "storeId") Long storeId,
+            @PathVariable(name = "menuId") Long menuId,
             @RequestBody PutMenuRequestDto requestDto,
-            @RequestPart(value = "image", required = false)MultipartFile image
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
         return ResponseEntity.ok(ApiResponse.success(service.updateMenu(authUser, storeId, menuId, requestDto, image)));
     }
@@ -67,8 +67,8 @@ public class MenuController {
     @DeleteMapping("/{storeId}/menus/{menuId}")
     public ResponseEntity<ApiResponse<DeleteMenuResponseDto>> deleteMenu(
             @Auth AuthUser authUser,
-            @PathVariable Long storeId,
-            @PathVariable Long menuId
+            @PathVariable(name = "storeId") Long storeId,
+            @PathVariable(name = "menuId") Long menuId
     ) {
         return ResponseEntity.ok(ApiResponse.success(service.deleteMenu(authUser, storeId, menuId)));
     }
