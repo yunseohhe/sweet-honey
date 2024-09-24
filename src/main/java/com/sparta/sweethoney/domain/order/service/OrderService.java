@@ -1,6 +1,7 @@
 package com.sparta.sweethoney.domain.order.service;
 
 import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
+import com.sparta.sweethoney.domain.common.exception.menu.ProductAlreadyStoppedException;
 import com.sparta.sweethoney.domain.common.exception.order.MinimumOrderAmountException;
 import com.sparta.sweethoney.domain.common.exception.order.NotFoundOrderException;
 import com.sparta.sweethoney.domain.common.exception.order.StoreClosedException;
@@ -32,6 +33,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sparta.sweethoney.domain.menu.entity.MenuStatus.INACTIVE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,14 +46,14 @@ public class OrderService {
     private final MenuRepository menuRepository;
 
     /* 주문 생성 */
-    public OrderCreateDto createOrder(OrderRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
+    public OrderCreateDto createOrder(Long userId, OrderRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
         Store store = storeRepository.findById(requestDto.getStoreId()).orElseThrow(NotFoundStoreException::new);
         Menu menu = menuRepository.findById(requestDto.getMenuId()).orElseThrow(NotFoundMenuException::new);
 
-        //영업시간, 최소금액 검증
+        //영업시간, 최소금액, 메뉴 주문 가능 검증
         LocalTime orderTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
-        validateTimeAndPrice(orderTime, store, menu, requestDto.getCount());
+        validateStoreAndMenu(orderTime, store, menu, requestDto.getCount());
 
         Order order = new Order(
                 user,
@@ -105,7 +108,7 @@ public class OrderService {
     }
 
     /* 영업 시간, 가격 최소 금액 검증 */
-    private static void validateTimeAndPrice(LocalTime orderTime, Store store, Menu menu, int count) {
+    private static void validateStoreAndMenu(LocalTime orderTime, Store store, Menu menu, int count) {
         LocalTime openTime = store.getOpenTime();
         LocalTime closeTime = store.getCloseTime();
 
@@ -121,6 +124,11 @@ public class OrderService {
             if (orderTime.isBefore(openTime) || orderTime.isAfter(closeTime)) {
                 throw new StoreClosedException();
             }
+        }
+
+        //메뉴가 판매중이어야 한다.
+        if (menu.getStatus().equals(INACTIVE)) {
+            throw new ProductAlreadyStoppedException();
         }
 
         //가게가 정한 최소 주문 금액 이상이어야 주문할 수 있다.
