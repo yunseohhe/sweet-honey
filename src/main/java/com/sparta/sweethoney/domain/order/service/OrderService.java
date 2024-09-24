@@ -1,9 +1,12 @@
 package com.sparta.sweethoney.domain.order.service;
 
-import com.sparta.sweethoney.domain.common.exception.menu.*;
-import com.sparta.sweethoney.domain.common.exception.order.*;
-import com.sparta.sweethoney.domain.common.exception.store.*;
-import com.sparta.sweethoney.domain.common.exception.user.*;
+import com.sparta.sweethoney.domain.common.exception.menu.NotFoundMenuException;
+import com.sparta.sweethoney.domain.common.exception.order.MinimumOrderAmountException;
+import com.sparta.sweethoney.domain.common.exception.order.NotFoundOrderException;
+import com.sparta.sweethoney.domain.common.exception.order.StoreClosedException;
+import com.sparta.sweethoney.domain.common.exception.order.UnauthorizedAccessException;
+import com.sparta.sweethoney.domain.common.exception.store.NotFoundStoreException;
+import com.sparta.sweethoney.domain.common.exception.user.NotFoundUserException;
 import com.sparta.sweethoney.domain.menu.entity.Menu;
 import com.sparta.sweethoney.domain.menu.repository.MenuRepository;
 import com.sparta.sweethoney.domain.order.Entity.Order;
@@ -47,7 +50,7 @@ public class OrderService {
 
         //영업시간, 최소금액 검증
         LocalTime orderTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
-        validateTimeAndPrice(orderTime, store, menu);
+        validateTimeAndPrice(orderTime, store, menu, requestDto.getCount());
 
         Order order = new Order(
                 user,
@@ -55,6 +58,7 @@ public class OrderService {
                 menu,
                 LocalDateTime.of(LocalDate.now(), orderTime),
                 requestDto.getAddress(),
+                requestDto.getCount(),
                 OrderStatus.PENDING
         );
 
@@ -91,8 +95,6 @@ public class OrderService {
 
         //가게 관리자만 주문 상태를 변경할 수 있다.
         if (checkIsNotOwner(userId, order)) {
-            log.info("userId={}", userId);
-            log.info("storeId={}", order.getStore().getUser().getId());
             throw new UnauthorizedAccessException();
         }
 
@@ -103,7 +105,7 @@ public class OrderService {
     }
 
     /* 영업 시간, 가격 최소 금액 검증 */
-    private static void validateTimeAndPrice(LocalTime orderTime, Store store, Menu menu) {
+    private static void validateTimeAndPrice(LocalTime orderTime, Store store, Menu menu, int count) {
         LocalTime openTime = store.getOpenTime();
         LocalTime closeTime = store.getCloseTime();
 
@@ -122,7 +124,7 @@ public class OrderService {
         }
 
         //가게가 정한 최소 주문 금액 이상이어야 주문할 수 있다.
-        if (menu.getPrice() < store.getMinOrderPrice()) {
+        if (menu.getPrice() * count < store.getMinOrderPrice()) {
             throw new MinimumOrderAmountException();
         }
     }

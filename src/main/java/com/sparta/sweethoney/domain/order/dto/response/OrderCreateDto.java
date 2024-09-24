@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class OrderCreateDto {
     private final Long orderId;
+    private final int count;
     private final int orderAmount;
 
     private final String storeName;
@@ -22,6 +23,7 @@ public class OrderCreateDto {
 
     public OrderCreateDto(Order order) {
         this.orderId = order.getId();
+        this.count = order.getCount();
         this.orderAmount = order.getAmount();
         this.storeName = order.getStore().getName();
         this.userEmail = order.getUser().getEmail();
