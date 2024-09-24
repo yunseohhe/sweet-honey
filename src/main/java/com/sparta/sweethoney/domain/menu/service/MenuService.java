@@ -75,6 +75,7 @@ public class MenuService {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(image.getContentType());
         metadata.setContentLength(image.getSize());
+        metadata.setContentDisposition("inline");
 
         // S3에 파일 업로드
         s3Client.putObject(bucket, fileName, image.getInputStream(), metadata);
@@ -114,6 +115,7 @@ public class MenuService {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(image.getContentType());
         metadata.setContentLength(image.getSize());
+        metadata.setContentDisposition("inline");
 
         // S3에 파일 업로드
         s3Client.putObject(bucket, fileName, image.getInputStream(), metadata);
