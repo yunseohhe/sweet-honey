@@ -118,7 +118,7 @@ class OrderServiceTest {
         Long storeId = 1L;
         Long menuId = 1L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소");
+        OrderRequestDto orderRequestDto = new OrderRequestDto( storeId, menuId, 2, "주소");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
@@ -128,7 +128,7 @@ class OrderServiceTest {
         when(orderRepository.save(any())).thenReturn(order);
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
 
-        OrderCreateDto createOrder = orderService.createOrder(orderRequestDto);
+        OrderCreateDto createOrder = orderService.createOrder(userId, orderRequestDto);
         ReflectionTestUtils.setField(createOrder, "orderId", orderId);
 
         OrderFindDto findOrder = orderService.findOrder(createOrder.getOrderId());
@@ -191,12 +191,12 @@ class OrderServiceTest {
         Long storeId = 1L;
         Long menuId = 1L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(storeId, menuId, 2, "주소입니당!!!");
 
         //when & then
         when(userRepository.findById(userId)).thenThrow(new NotFoundUserException());
 
-        assertThatThrownBy(() -> orderService.createOrder(orderRequestDto))
+        assertThatThrownBy(() -> orderService.createOrder(userId, orderRequestDto))
                 .isInstanceOf(NotFoundUserException.class);
     }
 
@@ -208,13 +208,13 @@ class OrderServiceTest {
         Long storeId = 2L;
         Long menuId = 1L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(storeId, menuId, 2, "주소입니당!!!");
 
         //when & then
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(storeRepository.findById(storeId)).thenThrow(new NotFoundStoreException());
 
-        assertThatThrownBy(() -> orderService.createOrder(orderRequestDto))
+        assertThatThrownBy(() -> orderService.createOrder(userId, orderRequestDto))
                 .isInstanceOf(NotFoundStoreException.class);
     }
 
@@ -226,14 +226,14 @@ class OrderServiceTest {
         Long storeId = 1L;
         Long menuId = 2L;
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(storeId, menuId, 2, "주소입니당!!!");
 
         //when & then
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
         when(menuRepository.findById(menuId)).thenThrow(new NotFoundMenuException());
 
-        assertThatThrownBy(() -> orderService.createOrder(orderRequestDto))
+        assertThatThrownBy(() -> orderService.createOrder(userId, orderRequestDto))
                 .isInstanceOf(NotFoundMenuException.class);
     }
 
@@ -294,14 +294,14 @@ class OrderServiceTest {
 
         ReflectionTestUtils.setField(menu, "price", menuPrice);
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, storeId, menuId, 2, "주소입니당!!!");
+        OrderRequestDto orderRequestDto = new OrderRequestDto(storeId, menuId, 2, "주소입니당!!!");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
         given(menuRepository.findById(menuId)).willReturn(Optional.of(menu));
 
         //when & then
-        assertThatThrownBy(() -> orderService.createOrder(orderRequestDto))
+        assertThatThrownBy(() -> orderService.createOrder(userId, orderRequestDto))
                 .isInstanceOf(MinimumOrderAmountException.class);
     }
 
