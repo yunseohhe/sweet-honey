@@ -94,6 +94,12 @@ public class MenuService {
         // 메뉴 조회
         Menu menu = findMenuOrElseThrow(menuId, store.getId());
 
+        // 기존 등록된 URL 가지고 이미지 원본 이름 가져오기
+        String menuImageName = extractFileNameFromUrl(menu.getImageUrl());
+
+        // 가져온 이미지 원본 이름으로 S3 이미지 삭제
+        s3Client.deleteObject(bucket, menuImageName);
+
         // 업로드한 파일의 S3 URL 주소
         String imageUrl = uploadImageToS3(image, bucket);
 
