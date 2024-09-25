@@ -37,7 +37,7 @@ public class ReviewController {
     @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<ApiResponse<?>> getReviews(
             @PathVariable("storeId") Long storeId,
-            @RequestParam(value = "maxRating", required = false) Optional<Integer> minRating,
+            @RequestParam(value = "minRating", required = false) Optional<Integer> minRating,
             @RequestParam(value = "maxRating", required = false) Optional<Integer> maxRating
     ) {
         List<ReviewResponseDto> reviews = reviewService.getReviews(storeId, minRating, maxRating);
