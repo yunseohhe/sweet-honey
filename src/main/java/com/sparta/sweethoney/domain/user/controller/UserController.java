@@ -37,6 +37,4 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> deleteUser(@RequestBody DeleteUserRequestDto deleteUserRequestDto, @Auth AuthUser authUser) {
         return ResponseEntity.ok(ApiResponse.success(userService.deleteUser(deleteUserRequestDto, authUser)));
     }
-
-
 }
