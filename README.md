@@ -14,9 +14,22 @@
 
 ## 🔗 와이어 프레임
 ![아웃소싱프로젝트.png](img%2F%EC%95%84%EC%9B%83%EC%86%8C%EC%8B%B1%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8.png)
-
-## 🗒️API 명세서
-https://www.notion.so/teamsparta/API-8aabd37abd834fc39d40040e1ba6ebc1
-
 ## ♻️ERD
 ![달달허니.jpg](img%2F%EB%8B%AC%EB%8B%AC%ED%97%88%EB%8B%88.jpg)
+
+## 🗒️API 명세서
+### 회원 가입
+![img.png](img/img.png)
+
+### 가게
+![img.png](img/img5.png)
+
+### 메뉴
+![img_1.png](img/img_1.png)
+
+### 주문
+![img_2.png](img/img_2.png)
+![img_3.png](img/img_3.png)
+
+### 리뷰
+![img_4.png](img/img_4.png)
