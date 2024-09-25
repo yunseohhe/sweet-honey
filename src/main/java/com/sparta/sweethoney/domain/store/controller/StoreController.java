@@ -60,7 +60,7 @@ public class StoreController {
     public ResponseEntity<ApiResponse<?>> setAdStatus(
             @PathVariable("storeId") Long storeId,
             @Auth AuthUser authUser,
-            @RequestParam(name = "AdStatus") AdStatus adStatus
+            @RequestParam(name = "adStatus") AdStatus adStatus
     ) {
         storeService.setAdStatus(storeId, authUser, adStatus);
         return ResponseEntity.ok(ApiResponse.success("광고 상태가 변경되었습니다."));

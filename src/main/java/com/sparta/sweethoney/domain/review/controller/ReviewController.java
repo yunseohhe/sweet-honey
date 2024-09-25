@@ -23,7 +23,7 @@ public class ReviewController {
      * @return 생성된 리뷰의 정보 (리뷰 ID, 주문 ID, 별점, 코멘트, 가게 ID)
      */
     @PostMapping("/orders/{orderId}/reviews")
-    public ResponseEntity<ApiResponse<?>> createReview(@PathVariable Long orderId, @RequestBody ReviewCreateRequestDto reviewCreateRequestDto){
+    public ResponseEntity<ApiResponse<?>> createReview(@PathVariable("orderId") Long orderId, @RequestBody ReviewCreateRequestDto reviewCreateRequestDto){
         return ResponseEntity.ok(ApiResponse.success(reviewService.createReview(orderId,reviewCreateRequestDto)));
     }
 
@@ -36,9 +36,9 @@ public class ReviewController {
      */
     @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<ApiResponse<?>> getReviews(
-            @PathVariable Long storeId,
-            @RequestParam Optional<Integer> minRating,
-            @RequestParam Optional<Integer> maxRating
+            @PathVariable("storeId") Long storeId,
+            @RequestParam(value = "maxRating", required = false) Optional<Integer> minRating,
+            @RequestParam(value = "maxRating", required = false) Optional<Integer> maxRating
     ) {
         List<ReviewResponseDto> reviews = reviewService.getReviews(storeId, minRating, maxRating);
         return ResponseEntity.ok(ApiResponse.success(reviews));

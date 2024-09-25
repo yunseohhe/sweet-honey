@@ -49,7 +49,7 @@ public class OrderController {
     /**
      * 주문 전체 조회
      *
-     * @param request
+     * @param authUser
      * @return ResponseEntity<List < OrderFindDto>>
      */
     @GetMapping
@@ -68,7 +68,7 @@ public class OrderController {
      * @return ResponseEntity<OrderFindDto>
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<?>> findOrder(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<?>> findOrder(@PathVariable("orderId") Long orderId) {
         OrderFindDto order = orderService.findOrder(orderId);
 
         return ResponseEntity.ok(ApiResponse.success(order));
@@ -79,12 +79,12 @@ public class OrderController {
      *
      * @param orderId
      * @param orderUpdateStatusRequest
-     * @param servletRequest
+     * @param authUser
      * @return ResponseEntity<OrderUpdateDto>
      */
     @PatchMapping("/{orderId}")
     public ResponseEntity<ApiResponse<?>> updateStatus(
-            @PathVariable Long orderId,
+            @PathVariable("orderId") Long orderId,
             @Validated @RequestBody OrderUpdateStatusRequest orderUpdateStatusRequest,
             @Auth AuthUser authUser
     ) {
